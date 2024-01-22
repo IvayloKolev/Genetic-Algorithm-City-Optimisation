@@ -1,9 +1,7 @@
 package Test;
 
-import city.optimisaiton.genetic.algorithm.City.City;
-import static city.optimisaiton.genetic.algorithm.City.City.decode;
-import city.optimisaiton.genetic.algorithm.City.Person;
-import java.util.ArrayList;
+import City.City;
+import static City.City.decode;
 
 /**
  *
@@ -36,13 +34,8 @@ public class GeneTest2 {
 
         City decodedCity = new City(decode(gene));
         
-        System.out.println("Decoded City");
+        System.out.println("\nDecoded City\n");
         System.out.println(decodedCity.toStringGridLayout());
-        System.out.println("\n Builsings List");
-        System.out.println(decodedCity.getBuildingsList());
-        System.out.println("\n People List");
-        ArrayList<Person> peopleList = decodedCity.getPeople();
-        System.out.println(peopleList.get(0).getName());
 
     }
 

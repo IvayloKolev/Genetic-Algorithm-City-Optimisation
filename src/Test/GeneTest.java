@@ -1,6 +1,6 @@
 package Test;
 
-import city.optimisaiton.genetic.algorithm.City.City;
+import City.City;
 
 /**
  *
@@ -27,8 +27,6 @@ public class GeneTest {
         city.populate(startingMoney, travelCost);
 
         System.out.println(city.toStringGridLayout());
-        
-        
 
         String gene = city.encode();
         System.out.println("Gene: \n" + gene);

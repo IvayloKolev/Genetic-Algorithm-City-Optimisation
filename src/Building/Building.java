@@ -1,7 +1,7 @@
 package Building;
 
 /**
- * Represents a building in the city.  asd
+ * Represents a building in the city.
  *
  * @author Ivaylo Kolev 2005549
  */

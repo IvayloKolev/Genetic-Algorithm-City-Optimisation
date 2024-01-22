@@ -1,6 +1,6 @@
 package Test;
 
-import city.optimisaiton.genetic.algorithm.City.City;
+import City.City;
 
 /**
  *

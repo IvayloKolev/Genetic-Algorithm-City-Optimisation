@@ -1,7 +1,7 @@
 package Test;
 
-import city.optimisaiton.genetic.algorithm.City.City;
-import city.optimisaiton.genetic.algorithm.City.Person;
+import City.City;
+import Person.Person;
 
 /**
  *

@@ -6,9 +6,9 @@ import Building.Building;
 import Building.Office;
 import Building.Shop;
 import City.City;
-import static city.optimisaiton.genetic.algorithm.City.FirstNames.getRandomFirstName;
-import static city.optimisaiton.genetic.algorithm.City.LastNames.getRandomLastName;
-import city.optimisaiton.genetic.algorithm.Debug;
+import Debug.Debug;
+import static Person.FirstNames.getRandomFirstName;
+import static Person.LastNames.getRandomLastName;
 import java.util.ArrayList;
 
 /**

@@ -4,13 +4,13 @@ package Test;
  *
  * @author Ivaylo Kolev 2005549
  */
-import city.optimisaiton.genetic.algorithm.City.Building;
+import Building.Building;
+import Building.House;
+import Building.Office;
+import City.City;
+import Person.Person;
 import java.util.ArrayList;
 
-import city.optimisaiton.genetic.algorithm.City.City;
-import city.optimisaiton.genetic.algorithm.City.House;
-import city.optimisaiton.genetic.algorithm.City.Office;
-import city.optimisaiton.genetic.algorithm.City.Person;
 import java.util.Random;
 
 public class PersonTest {
