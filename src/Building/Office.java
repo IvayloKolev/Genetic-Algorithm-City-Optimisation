@@ -36,7 +36,7 @@ public class Office extends Building {
 
     /**
      * Copy Constructor
-     * 
+     *
      * @param toBeCopiedOffice The Office object to be copied.
      */
     public Office(Office toBeCopiedOffice) {

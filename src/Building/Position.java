@@ -5,6 +5,7 @@ package Building;
  * @author Ivaylo Kolev 2005549
  */
 public class Position {
+
     private int x;
     private int y;
 
@@ -21,4 +22,3 @@ public class Position {
         return y;
     }
 }
-

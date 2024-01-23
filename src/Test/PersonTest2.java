@@ -23,7 +23,9 @@ public class PersonTest2 {
         int startingMoney = 100;
         double travelCost = 1.5;
 
-        City city = City.initializeRandomCity(width, height, houses, shops, offices, shopAverageSpend, officeAverageSalary, variation);
+        double centerBias = 3.0;
+
+        City city = City.initializeRandomCity(width, height, houses, shops, offices, shopAverageSpend, officeAverageSalary, variation, centerBias);
 
         city.populate(startingMoney, travelCost);
 

@@ -34,7 +34,7 @@ public class Shop extends Building {
 
     /**
      * Copy Constructor
-     * 
+     *
      * @param toBeCopiedShop The Shop object to be copied.
      */
     public Shop(Shop toBeCopiedShop) {

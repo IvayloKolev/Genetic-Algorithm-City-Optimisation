@@ -33,8 +33,8 @@ public class Building {
             this.position = toBeCopiedBuilding.getPosition();
         } else {
             // Handle the case where toBeCopiedBuilding is null
-            this.type = BuildingType.DEFAULT; 
-            this.position = new Position(0, 0); 
+            this.type = BuildingType.DEFAULT;
+            this.position = new Position(0, 0);
         }
     }
 

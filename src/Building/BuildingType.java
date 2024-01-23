@@ -7,11 +7,11 @@ package Building;
  * @author Ivaylo Kolev 2005549
  */
 public enum BuildingType {
-    HOUSE('H'),   // Represents a House
-    SHOP('S'),    // Represents a Shop
-    OFFICE('O'),  // Represents an Office
-    ROAD('+'),    // Represents a Road
-    EMPTY(' '),   // Represents an Empty Space
+    HOUSE('H'), // Represents a House
+    SHOP('S'), // Represents a Shop
+    OFFICE('O'), // Represents an Office
+    ROAD('+'), // Represents a Road
+    EMPTY(' '), // Represents an Empty Space
     DEFAULT(' '); // Default
 
     /**
