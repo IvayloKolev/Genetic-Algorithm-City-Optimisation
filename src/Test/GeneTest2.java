@@ -11,19 +11,21 @@ public class GeneTest2 {
 
     public static void main(String[] args) {
 
-        int width = 15;
-        int height = 15;
-        int houses = 10;
-        int shops = 3;
+        int width = 35;
+        int height = 35;
+        int houses = 60;
+        int shops = 40;
         int shopAverageSpend = 30;
-        int offices = 3;
+        int offices = 40;
         int officeAverageSalary = 100;
         double variation = 0.1;
 
         int startingMoney = 100;
         double travelCost = 1.5;
 
-        City city = City.initializeRandomCity(width, height, houses, shops, offices, shopAverageSpend, officeAverageSalary, variation);
+        double centerBias = 3.0;
+
+        City city = City.initializeRandomCity(width, height, houses, shops, offices, shopAverageSpend, officeAverageSalary, variation, centerBias);
 
         city.populate(startingMoney, travelCost);
 
@@ -33,8 +35,6 @@ public class GeneTest2 {
         System.out.println("Gene: \n" + gene);
 
         City decodedCity = new City(decode(gene));
-        
-        System.out.println("\nDecoded City\n");
         System.out.println(decodedCity.toStringGridLayout());
 
     }

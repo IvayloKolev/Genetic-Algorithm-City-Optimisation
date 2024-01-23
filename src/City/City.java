@@ -143,6 +143,8 @@ public class City {
      * @param officeAverageSalary The average salary in offices.
      * @param variation The possible variation for the shop spending and
      * salaries.
+     * @param centerBias Bias factor for clumping buildings in the center of the
+     * city.
      * @return A randomly initialized city.
      */
     public static City initializeRandomCity(
@@ -153,7 +155,9 @@ public class City {
             int numOffices,
             int shopAverageSpend,
             int officeAverageSalary,
-            double variation) {
+            double variation,
+            double centerBias
+    ) {
 
         Debug debug = new Debug();
         Random random = new Random();
@@ -169,74 +173,95 @@ public class City {
         int shopsPlaced = 0;
         int officesPlaced = 0;
         int emptySpacesPlaced = 0;
+        double bias = centerBias;
 
         ArrayList<Building> buildingsList = new ArrayList<>();
         ArrayList<Building> houseList = new ArrayList<>();
         ArrayList<Building> shopList = new ArrayList<>();
         ArrayList<Building> officeList = new ArrayList<>();
 
-        for (int i = 1; i < width; i += 2) {
-            for (int j = 1; j < height; j += 2) {
+        int numberOfLoops = 0;
 
-                // Using Gaussian distribution to bias building the placement towards the center
-                double biasFactor = 2.0;
-                double distanceToCenter = Math.sqrt(Math.pow(i - width / 2, 2) + Math.pow(j - height / 2, 2));
-                double probability = Math.exp(-biasFactor * distanceToCenter * distanceToCenter / (2 * Math.pow(width / 4.0, 2) + Math.pow(height / 4.0, 2)));
+        while (housesPlaced < numHouses || shopsPlaced < numShops || officesPlaced < numOffices || numberOfLoops < 5) {
 
-                int randomBuildingType;
-
-                // Adjust probabilities based on desired bias
-                if (random.nextDouble() < probability / 2) {
-                    randomBuildingType = BuildingType.HOUSE.ordinal();
-                } else if (random.nextDouble() < probability / 1.5) {
-                    randomBuildingType = BuildingType.OFFICE.ordinal();
-                } else if (random.nextDouble() < probability / 1.2) {
-                    randomBuildingType = BuildingType.SHOP.ordinal();
-                } else {
-                    // Increase the probability of an empty space as distance from the center increases
-                    double emptySpaceProbability = distanceToCenter / Math.max(width, height) / 2;
-
-                    if (random.nextDouble() < emptySpaceProbability) {
-                        randomBuildingType = BuildingType.EMPTY.ordinal();
-                    } else {
-                        randomBuildingType = BuildingType.EMPTY.ordinal(); // Fallback if empty space is not chosen, force empty space
+            for (int i = 1; i < width - 1; i += 2) {
+                for (int j = 1; j < height - 1; j += 2) {
+                    // Check if the maximum number of houses, shops, and offices have been placed
+                    if (housesPlaced >= numHouses && shopsPlaced >= numShops && officesPlaced >= numOffices) {
+                        // If all limits are reached, break out of the loop
+                        break;
                     }
-                }
 
-                // Place buildings based on the randomBuildingType
-                switch (BuildingType.values()[randomBuildingType]) {
-                    case HOUSE -> {
-                        city.gridLayout[i][j] = BuildingType.HOUSE.getSymbol();
-                        city.buildings[i][j] = new House(i, j);
+                    double distanceToCenter = Math.sqrt(Math.pow(i - width / 2, 2) + Math.pow(j - height / 2, 2));
+                    double probability = Math.exp(-bias * distanceToCenter * distanceToCenter / (2 * Math.pow(width / 4.0, 2) + Math.pow(height / 4.0, 2)));
+
+                    int randomBuildingType;
+
+                    // Adjust probabilities based on desired bias
+                    if (random.nextDouble() < probability / 2 && housesPlaced < numHouses) {
+                        randomBuildingType = BuildingType.HOUSE.ordinal();
                         housesPlaced++;
-                        houseList.add(city.buildings[i][j]);
-                        buildingsList.add(city.buildings[i][j]);
-                        debug.write("Placed House at (" + i + ", " + j + ")");
-                    }
-                    case SHOP -> {
-                        city.gridLayout[i][j] = BuildingType.SHOP.getSymbol();
-                        city.buildings[i][j] = new Shop(i, j, shopAverageSpend, variation);
+                    } else if (random.nextDouble() < probability / 1.5 && shopsPlaced < numShops) {
+                        randomBuildingType = BuildingType.SHOP.ordinal();
                         shopsPlaced++;
-                        shopList.add(city.buildings[i][j]);
-                        buildingsList.add(city.buildings[i][j]);
-                        debug.write("Placed Shop at (" + i + ", " + j + ")");
-                    }
-                    case OFFICE -> {
-                        city.gridLayout[i][j] = BuildingType.OFFICE.getSymbol();
-                        city.buildings[i][j] = new Office(i, j, officeAverageSalary, variation);
+                    } else if (random.nextDouble() < probability / 1.2 && officesPlaced < numOffices) {
+                        randomBuildingType = BuildingType.OFFICE.ordinal();
                         officesPlaced++;
-                        officeList.add(city.buildings[i][j]);
-                        buildingsList.add(city.buildings[i][j]);
-                        debug.write("Placed Office at (" + i + ", " + j + ")");
+                    } else {
+                        // Increase the probability of an empty space as distance from the center increases
+                        double emptySpaceProbability = distanceToCenter / Math.max(width, height) / 2;
+
+                        if (random.nextDouble() < emptySpaceProbability) {
+                            randomBuildingType = BuildingType.EMPTY.ordinal();
+                        } else {
+                            randomBuildingType = BuildingType.EMPTY.ordinal(); // Fallback if empty space is not chosen, force empty space
+                        }
                     }
-                    case EMPTY -> {
-                        city.gridLayout[i][j] = BuildingType.EMPTY.getSymbol();
-                        city.buildings[i][j] = null;
-                        emptySpacesPlaced++;
-                        debug.write("Placed Empty Space at (" + i + ", " + j + ")");
+
+                    // Place buildings based on the randomBuildingType
+                    switch (BuildingType.values()[randomBuildingType]) {
+                        case HOUSE -> {
+                            if (housesPlaced < numHouses) {
+                                city.gridLayout[i][j] = BuildingType.HOUSE.getSymbol();
+                                city.buildings[i][j] = new House(i, j);
+                                housesPlaced++;
+                                houseList.add(city.buildings[i][j]);
+                                buildingsList.add(city.buildings[i][j]);
+                                debug.write("Placed House at (" + i + ", " + j + ")");
+                            }
+                        }
+                        case SHOP -> {
+                            if (shopsPlaced < numShops) {
+                                city.gridLayout[i][j] = BuildingType.SHOP.getSymbol();
+                                city.buildings[i][j] = new Shop(i, j, shopAverageSpend, variation);
+                                shopsPlaced++;
+                                shopList.add(city.buildings[i][j]);
+                                buildingsList.add(city.buildings[i][j]);
+                                debug.write("Placed Shop at (" + i + ", " + j + ")");
+                            }
+                        }
+                        case OFFICE -> {
+                            if (officesPlaced < numOffices) {
+                                city.gridLayout[i][j] = BuildingType.OFFICE.getSymbol();
+                                city.buildings[i][j] = new Office(i, j, officeAverageSalary, variation);
+                                officesPlaced++;
+                                officeList.add(city.buildings[i][j]);
+                                buildingsList.add(city.buildings[i][j]);
+                                debug.write("Placed Office at (" + i + ", " + j + ")");
+                            }
+                        }
+                        case EMPTY -> {
+                            if (emptySpacesPlaced < (totalSpots - numHouses - numShops - numOffices)) {
+                                city.gridLayout[i][j] = BuildingType.EMPTY.getSymbol();
+                                city.buildings[i][j] = null;
+                                emptySpacesPlaced++;
+                                debug.write("Placed Empty Space at (" + i + ", " + j + ")");
+                            }
+                        }
                     }
                 }
             }
+            numberOfLoops++;
         }
 
         city.setBuildingsList(buildingsList);
@@ -334,6 +359,7 @@ public class City {
      * @return The decoded city.
      */
     public static City decode(String gene) {
+        Debug debug = new Debug();
         String[] parts = gene.split(" ");
         int index = 0;
 
@@ -342,6 +368,7 @@ public class City {
         int height = Integer.parseInt(parts[index++]);
 
         City city = new City(width, height);
+        city.gene = gene;
 
         // Initialize gridLayout and buildings arrays
         city.gridLayout = new char[width][height];
@@ -411,14 +438,35 @@ public class City {
                 int officeX = Integer.parseInt(parts[index + 5]);
                 int officeY = Integer.parseInt(parts[index + 6]);
 
-                Person person = new Person(
-                        city.getStartingMoney(),
-                        city.getTravelCost(),
-                        (House) city.getBuildingAt(houseX, houseY),
-                        (Office) city.getBuildingAt(officeX, officeY),
-                        city);
+                Person person = null;
 
-                city.addPerson(person);
+                // Ensure the building at (houseX, houseY) is a House
+                Building houseBuilding = city.getBuildingAt(houseX, houseY);
+                if (houseBuilding instanceof House) {
+                    // Ensure the building at (officeX, officeY) is an Office
+                    Building officeBuilding = city.getBuildingAt(officeX, officeY);
+                    if (officeBuilding instanceof Office) {
+                        person = new Person(
+                                city.getStartingMoney(),
+                                city.getTravelCost(),
+                                (House) houseBuilding,
+                                (Office) officeBuilding,
+                                city);
+                    } else {
+                        // Handle the case where the building at (officeX, officeY) is not an Office
+                        debug.write("Invalid building type at " + officeX + " " + officeY + ". Expected Office.");
+                    }
+                } else {
+                    // Handle the case where the building at (houseX, houseY) is not a House
+                    debug.write("Invalid building type at " + houseX + " " + houseY + ". Expected House.");
+                }
+
+                // Check if the person was successfully created
+                if (person != null) {
+                    city.addPerson(person);
+                    debug.write("Successfuly added person to City");
+                }
+
                 // Move to the next part
                 index += 7;
             } else {
@@ -567,6 +615,10 @@ public class City {
 
     public void setTravelCost(double travelCost) {
         this.travelCost = travelCost;
+    }
+
+    public void setGene(String gene) {
+        this.gene = gene;
     }
 
 }
