@@ -31,6 +31,7 @@ public class City {
     private ArrayList<Building> offices;
     private ArrayList<Building> shops;
     private String gene;
+    private double fitness;
 
     private Debug debug = new Debug();
 
@@ -153,8 +154,8 @@ public class City {
             int numHouses,
             int numShops,
             int numOffices,
-            int shopAverageSpend,
-            int officeAverageSalary,
+            double shopAverageSpend,
+            double officeAverageSalary,
             double variation,
             double centerBias
     ) {
@@ -504,7 +505,11 @@ public class City {
         return result.toString();
     }
 
-    // Helper method to calculate the total money owned by all people
+    /**
+     * Gets all the sum of money from all the people in the city.
+     *
+     * @return The sum of money.
+     */
     public double getTotalMoney() {
         double totalMoney = 0;
         ArrayList<Person> peopleInCity = this.getPeople();
@@ -619,6 +624,14 @@ public class City {
 
     public void setGene(String gene) {
         this.gene = gene;
+    }
+
+    public double getFitness() {
+        return fitness;
+    }
+
+    public void setFitness(double fitness) {
+        this.fitness = fitness;
     }
 
 }

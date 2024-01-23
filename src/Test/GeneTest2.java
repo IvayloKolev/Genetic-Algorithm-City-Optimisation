@@ -15,9 +15,9 @@ public class GeneTest2 {
         int height = 35;
         int houses = 60;
         int shops = 40;
-        int shopAverageSpend = 30;
+        double shopAverageSpend = 30;
         int offices = 40;
-        int officeAverageSalary = 100;
+        double officeAverageSalary = 100;
         double variation = 0.1;
 
         int startingMoney = 100;
@@ -25,7 +25,16 @@ public class GeneTest2 {
 
         double centerBias = 3.0;
 
-        City city = City.initializeRandomCity(width, height, houses, shops, offices, shopAverageSpend, officeAverageSalary, variation, centerBias);
+        City city = City.initializeRandomCity(
+                width,
+                height,
+                houses,
+                shops,
+                offices,
+                shopAverageSpend,
+                officeAverageSalary,
+                variation,
+                centerBias);
 
         city.populate(startingMoney, travelCost);
 
