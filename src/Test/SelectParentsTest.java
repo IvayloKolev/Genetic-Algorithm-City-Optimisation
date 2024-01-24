@@ -2,28 +2,29 @@ package Test;
 
 import City.City;
 import GeneticAlgorithm.GeneticAlgorithm;
+import GeneticAlgorithm.SelectionMethod;
 import java.util.ArrayList;
 
 /**
  *
  * @author Ivaylo Kolev 2005549
  */
-public class SelectionTestBoltzmann {
+public class SelectParentsTest {
 
     public static void main(String[] args) {
 
-        int populationSize = 20;
+        int populationSize = 100;
         int width = 35;
         int height = 35;
         int houses = 60;
         int shops = 20;
-        double shopAverageSpend = 70;
+        double shopAverageSpend = 50;
         int offices = 15;
         double officeAverageSalary = 100;
         double variation = 0.1;
 
         int startingMoney = 100;
-        double travelCost = 4.0;
+        double travelCost = 3.0;
 
         double centerBias = 3.0;
 
@@ -48,7 +49,7 @@ public class SelectionTestBoltzmann {
         }
 
         // Evaluate fitness
-        ArrayList<City> sortedPopulation = GeneticAlgorithm.evaluateFitness(initialPopulation);
+        ArrayList<City> sortedPopulation = ga.evaluateFitness(initialPopulation);
 
         for (int i = 0; i < sortedPopulation.size(); i++) {
             System.out.println("\nCity " + (i + 1) + "\n");
@@ -56,12 +57,13 @@ public class SelectionTestBoltzmann {
             System.out.println("Inactive People: " + sortedPopulation.get(i).countInactivePeople());
         }
 
-        City selectedCity = GeneticAlgorithm.boltzmannSelection(sortedPopulation, 10.0);
+        ArrayList<City> parents = ga.selectParents(sortedPopulation, SelectionMethod.TOURNAMENT, 10);
 
-        // Display the selected city
-        System.out.println("\nBoltzmann Selection Test:");
-        System.out.println("Selected City: " + selectedCity);
-        System.out.println("City Fitness: " + selectedCity.getFitness());
+        for (int i = 0; i < parents.size(); i++) {
+            System.out.println("\nSelected Parent City " + (i + 1) + "\n");
+            System.out.println("Fitness: " + parents.get(i).getFitness());
+            System.out.println("Inactive People: " + parents.get(i).countInactivePeople());
+        }
     }
 
 }

@@ -94,7 +94,9 @@ public class GeneticAlgorithm {
         // Evaluate fitness for each city
         for (City city : population) {
             double fitness = city.getTotalMoney() - (city.countInactivePeople() * 100);
-            city.setFitness(Math.floor(fitness * 100) / 100);
+
+            // If fitness is negative, set it to 0
+            city.setFitness(Math.max(0, Math.floor(fitness * 100) / 100));
         }
 
         // Sort the population based on fitness
@@ -103,10 +105,91 @@ public class GeneticAlgorithm {
         return population;
     }
 
-    // Placeholder method for selecting cities as parents for reproduction
-    public static ArrayList<City> selectParents(ArrayList<City> population) {
-        // Implement parent selection logic here
-        return null;
+    /**
+     * Method for selecting cities as parents for reproduction.
+     *
+     * @param population The population of cities.
+     * @param selectionMethod The preferred selection method.
+     * @param parameters Additional parameters required by the selection method.
+     * @return An ArrayList of selected parents.
+     */
+    public static ArrayList<City> selectParents(ArrayList<City> population, SelectionMethod selectionMethod, Object... parameters) {
+        int numberOfParents = Math.max(2, (int) (0.1 * population.size()));
+        ArrayList<City> selectedParents;
+
+        switch (selectionMethod) {
+            case FITNESS_PROPORTIONAL:
+                selectedParents = selectParentsUsingFitnessProportional(population, numberOfParents);
+                break;
+            case LINEAR_RANKING:
+                if (parameters.length > 0 && parameters[0] instanceof Double) {
+                    double selectionPressure = (Double) parameters[0];
+                    selectedParents = selectParentsUsingLinearRanking(population, numberOfParents, selectionPressure);
+                } else {
+                    throw new IllegalArgumentException("Linear ranking selection requires a selection pressure parameter.");
+                }
+                break;
+            case TOURNAMENT:
+                if (parameters.length > 0 && parameters[0] instanceof Integer) {
+                    int tournamentSize = (Integer) parameters[0];
+                    selectedParents = selectParentsUsingTournament(population, numberOfParents, tournamentSize);
+                } else {
+                    throw new IllegalArgumentException("Tournament selection requires a tournament size parameter.");
+                }
+                break;
+            case BOLTZMANN:
+                if (parameters.length > 0 && parameters[0] instanceof Double) {
+                    double temperature = (Double) parameters[0];
+                    selectedParents = selectParentsUsingBoltzmann(population, numberOfParents, temperature);
+                } else {
+                    throw new IllegalArgumentException("Boltzmann selection requires a temperature parameter.");
+                }
+                break;
+            default:
+                throw new IllegalArgumentException("Invalid selection method: " + selectionMethod);
+        }
+
+        return selectedParents;
+    }
+
+    // Helper method for selecting parents using Fitness Proportional Selection
+    private static ArrayList<City> selectParentsUsingFitnessProportional(ArrayList<City> population, int numberOfParents) {
+        ArrayList<City> selectedParents = new ArrayList<>();
+        for (int i = 0; i < numberOfParents; i++) {
+            City parent = fitnessProportionalSelection(population);
+            selectedParents.add(parent);
+        }
+        return selectedParents;
+    }
+
+    // Helper method for selecting parents using Linear Ranking Selection
+    private static ArrayList<City> selectParentsUsingLinearRanking(ArrayList<City> population, int numberOfParents, double selectionPressure) {
+        ArrayList<City> selectedParents = new ArrayList<>();
+        for (int i = 0; i < numberOfParents; i++) {
+            City parent = linearRankingSelection(population, selectionPressure);
+            selectedParents.add(parent);
+        }
+        return selectedParents;
+    }
+
+    // Helper method for selecting parents using Tournament Selection
+    private static ArrayList<City> selectParentsUsingTournament(ArrayList<City> population, int numberOfParents, int tournamentSize) {
+        ArrayList<City> selectedParents = new ArrayList<>();
+        for (int i = 0; i < numberOfParents; i++) {
+            City parent = tournamentSelection(population, tournamentSize);
+            selectedParents.add(parent);
+        }
+        return selectedParents;
+    }
+
+    // Helper method for selecting parents using Boltzmann Selection
+    private static ArrayList<City> selectParentsUsingBoltzmann(ArrayList<City> population, int numberOfParents, double temperature) {
+        ArrayList<City> selectedParents = new ArrayList<>();
+        for (int i = 0; i < numberOfParents; i++) {
+            City parent = boltzmannSelection(population, temperature);
+            selectedParents.add(parent);
+        }
+        return selectedParents;
     }
 
     /**
@@ -239,10 +322,122 @@ public class GeneticAlgorithm {
         return totalProb;
     }
 
-    // Placeholder method for crossover (recombination) of parent cities to create offspring
+    /**
+     * Placeholder method for crossover (recombination) of parent cities to
+     * create offspring.
+     *
+     * @param parents The list of parent cities.
+     * @return A list of offspring cities.
+     */
     public static ArrayList<City> crossover(ArrayList<City> parents) {
-        // Implement crossover logic here
-        return null;
+        if (parents.size() < 2) {
+            throw new IllegalArgumentException("Crossover requires at least two parents.");
+        }
+
+        int geneLength = parents.get(0).getGene().length();
+
+        // Define the range for the crossover point (after width and height, and before "SM")
+        int crossoverMin = parents.get(0).getGene().indexOf(" ", parents.get(0).getGene().indexOf(" ") + 1) + 1;
+        int crossoverMax = geneLength - 3; // 3 is the length of "SM " + value + space
+
+        // Random crossover point within the defined range
+        int crossoverPoint = random.nextInt(crossoverMax - crossoverMin + 1) + crossoverMin;
+
+        ArrayList<City> offspring = new ArrayList<>();
+
+        for (int i = 0; i < parents.size(); i += 2) {
+            if (i + 1 < parents.size()) {
+                // Extract genes of two parents
+                String gene1 = parents.get(i).getGene();
+                String gene2 = parents.get(i + 1).getGene();
+
+                // Perform crossover at the chosen point
+                String offspringGene1 = gene1.substring(0, crossoverPoint) + gene2.substring(crossoverPoint);
+                String offspringGene2 = gene2.substring(0, crossoverPoint) + gene1.substring(crossoverPoint);
+
+                // Create offspring cities and add them to the list
+                City offspringCity1 = City.decode(offspringGene1);
+                City offspringCity2 = City.decode(offspringGene2);
+
+                offspring.add(offspringCity1);
+                offspring.add(offspringCity2);
+            } else {
+                // If there is an odd number of parents, add the last parent as is
+                offspring.add(parents.get(i));
+            }
+        }
+
+        return offspring;
+    }
+
+    /**
+     * Chooses a crossover point for the gene representation.
+     *
+     * @param gene The gene representation of the city.
+     * @return The index of the chosen crossover point.
+     */
+    public static int chooseCrossoverPoint(String gene) {
+        int spaceCount = 0;
+        int index = 0;
+
+        // Iterate through the gene until the sixth space is encountered
+        while (spaceCount < 6 && index < gene.length()) {
+            if (gene.charAt(index) == ' ') {
+                spaceCount++;
+            }
+            index++;
+        }
+
+        // Ensure the index is within the bounds of the gene
+        return Math.min(index, gene.length());
+    }
+
+    /**
+     * Splits the gene into substrings based on building type.
+     *
+     * @param gene The gene representation of the city.
+     * @return ArrayList of substrings containing city and building information.
+     */
+    public static ArrayList<String> splitGene(String gene) {
+        ArrayList<String> substrings = new ArrayList<>();
+
+        // Split the gene by spaces
+        String[] parts = gene.split(" ");
+
+        // Add the first substring with city information
+        StringBuilder cityInfo = new StringBuilder();
+        int index = 0;
+        while (index < parts.length && !parts[index].equals("H") && !parts[index].equals("S") && !parts[index].equals("O")) {
+            cityInfo.append(parts[index]).append(" ");
+            index++;
+        }
+        substrings.add(cityInfo.toString().trim());
+
+        while (index < parts.length) {
+            StringBuilder buildingInfo = new StringBuilder();
+            buildingInfo.append(parts[index++]).append(" ");
+
+            if (parts[index - 1].equals("H")) {
+                buildingInfo.append(parts[index++]).append(" ");
+                buildingInfo.append(parts[index++]).append(" ");
+            }
+
+            if (parts[index - 1].equals("O")) {
+                buildingInfo.append(parts[index++]).append(" ");
+                buildingInfo.append(parts[index++]).append(" ");
+                buildingInfo.append(parts[index++]).append(" ");
+            }
+
+            if (parts[index - 1].equals("S")) {
+                buildingInfo.append(parts[index++]).append(" ");
+                buildingInfo.append(parts[index++]).append(" ");
+                buildingInfo.append(parts[index++]).append(" ");
+            }
+
+            substrings.add(buildingInfo.toString().trim());
+        }
+
+        return substrings;
     }
 
     // Placeholder method for applying mutation to the offspring cities

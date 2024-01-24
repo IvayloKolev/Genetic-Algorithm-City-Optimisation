@@ -1,6 +1,8 @@
 package Test;
 
 import City.City;
+import GeneticAlgorithm.GeneticAlgorithm;
+import java.util.ArrayList;
 
 /**
  *
@@ -10,19 +12,21 @@ public class GeneTest {
 
     public static void main(String[] args) {
 
-        int width = 15;
-        int height = 15;
-        int houses = 10;
-        int shops = 3;
+        GeneticAlgorithm ga = new GeneticAlgorithm();
+
+        int width = 9;
+        int height = 9;
+        int houses = 2;
+        int shops = 2;
         int shopAverageSpend = 30;
-        int offices = 3;
+        int offices = 2;
         int officeAverageSalary = 100;
         double variation = 0.1;
 
         int startingMoney = 100;
         double travelCost = 1.5;
 
-        double centerBias = 3.0;
+        double centerBias = 2.0;
 
         City city = City.initializeRandomCity(width, height, houses, shops, offices, shopAverageSpend, officeAverageSalary, variation, centerBias);
 
@@ -32,6 +36,13 @@ public class GeneTest {
 
         String gene = city.encode();
         System.out.println("Gene: \n" + gene);
+
+        ArrayList<String> parts = GeneticAlgorithm.splitGene(gene);
+
+        System.out.println("\nGene Parts:");
+        for (int i = 0; i < parts.size(); i++) {
+            System.out.println(parts.get(i));
+        }
 
     }
 

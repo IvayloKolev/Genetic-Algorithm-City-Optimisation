@@ -33,7 +33,8 @@ public class City {
     private String gene;
     private double fitness;
 
-    private Debug debug = new Debug();
+    private static final Random random = new Random();
+    private static final Debug debug = new Debug();
 
     /**
      * Constructs a city with the specified width and height.
@@ -160,8 +161,6 @@ public class City {
             double centerBias
     ) {
 
-        Debug debug = new Debug();
-        Random random = new Random();
         City city = new City(width, height);
 
         int totalSpots = (width / 2) * (height / 2);
@@ -181,88 +180,81 @@ public class City {
         ArrayList<Building> shopList = new ArrayList<>();
         ArrayList<Building> officeList = new ArrayList<>();
 
-        int numberOfLoops = 0;
+        for (int i = 1; i < width - 1; i += 2) {
+            for (int j = 1; j < height - 1; j += 2) {
+                // Check if the maximum number of houses, shops, and offices have been placed
+                if (housesPlaced >= numHouses && shopsPlaced >= numShops && officesPlaced >= numOffices) {
+                    // If all limits are reached, break out of the loop
+                    break;
+                }
 
-        while (housesPlaced < numHouses || shopsPlaced < numShops || officesPlaced < numOffices || numberOfLoops < 5) {
+                double distanceToCenter = Math.sqrt(Math.pow(i - width / 2, 2) + Math.pow(j - height / 2, 2));
+                double probability = Math.exp(-bias * distanceToCenter * distanceToCenter / (2 * Math.pow(width / 4.0, 2) + Math.pow(height / 4.0, 2)));
 
-            for (int i = 1; i < width - 1; i += 2) {
-                for (int j = 1; j < height - 1; j += 2) {
-                    // Check if the maximum number of houses, shops, and offices have been placed
-                    if (housesPlaced >= numHouses && shopsPlaced >= numShops && officesPlaced >= numOffices) {
-                        // If all limits are reached, break out of the loop
-                        break;
-                    }
+                int randomBuildingType;
 
-                    double distanceToCenter = Math.sqrt(Math.pow(i - width / 2, 2) + Math.pow(j - height / 2, 2));
-                    double probability = Math.exp(-bias * distanceToCenter * distanceToCenter / (2 * Math.pow(width / 4.0, 2) + Math.pow(height / 4.0, 2)));
+                if (random.nextDouble() < probability && housesPlaced < numHouses) {
+                    randomBuildingType = BuildingType.HOUSE.ordinal();
+                    housesPlaced++;
+                } else if (random.nextDouble() < probability && shopsPlaced < numShops) {
+                    randomBuildingType = BuildingType.SHOP.ordinal();
+                    shopsPlaced++;
+                } else if (random.nextDouble() < probability && officesPlaced < numOffices) {
+                    randomBuildingType = BuildingType.OFFICE.ordinal();
+                    officesPlaced++;
+                } else {
+                    // Increase the probability of an empty space as distance from the center increases
+                    double emptySpaceProbability = distanceToCenter / Math.max(width, height) / 2;
 
-                    int randomBuildingType;
-
-                    // Adjust probabilities based on desired bias
-                    if (random.nextDouble() < probability / 2 && housesPlaced < numHouses) {
-                        randomBuildingType = BuildingType.HOUSE.ordinal();
-                        housesPlaced++;
-                    } else if (random.nextDouble() < probability / 1.5 && shopsPlaced < numShops) {
-                        randomBuildingType = BuildingType.SHOP.ordinal();
-                        shopsPlaced++;
-                    } else if (random.nextDouble() < probability / 1.2 && officesPlaced < numOffices) {
-                        randomBuildingType = BuildingType.OFFICE.ordinal();
-                        officesPlaced++;
+                    if (random.nextDouble() < emptySpaceProbability) {
+                        randomBuildingType = BuildingType.EMPTY.ordinal();
                     } else {
-                        // Increase the probability of an empty space as distance from the center increases
-                        double emptySpaceProbability = distanceToCenter / Math.max(width, height) / 2;
+                        randomBuildingType = BuildingType.EMPTY.ordinal(); // Fallback if empty space is not chosen, force empty space
+                    }
+                }
 
-                        if (random.nextDouble() < emptySpaceProbability) {
-                            randomBuildingType = BuildingType.EMPTY.ordinal();
-                        } else {
-                            randomBuildingType = BuildingType.EMPTY.ordinal(); // Fallback if empty space is not chosen, force empty space
+                // Place buildings based on the randomBuildingType
+                switch (BuildingType.values()[randomBuildingType]) {
+                    case HOUSE -> {
+                        if (housesPlaced < numHouses) {
+                            city.gridLayout[i][j] = BuildingType.HOUSE.getSymbol();
+                            city.buildings[i][j] = new House(i, j);
+                            housesPlaced++;
+                            houseList.add(city.buildings[i][j]);
+                            buildingsList.add(city.buildings[i][j]);
+                            debug.write("Placed House at (" + i + ", " + j + ")");
                         }
                     }
-
-                    // Place buildings based on the randomBuildingType
-                    switch (BuildingType.values()[randomBuildingType]) {
-                        case HOUSE -> {
-                            if (housesPlaced < numHouses) {
-                                city.gridLayout[i][j] = BuildingType.HOUSE.getSymbol();
-                                city.buildings[i][j] = new House(i, j);
-                                housesPlaced++;
-                                houseList.add(city.buildings[i][j]);
-                                buildingsList.add(city.buildings[i][j]);
-                                debug.write("Placed House at (" + i + ", " + j + ")");
-                            }
+                    case SHOP -> {
+                        if (shopsPlaced < numShops) {
+                            city.gridLayout[i][j] = BuildingType.SHOP.getSymbol();
+                            city.buildings[i][j] = new Shop(i, j, shopAverageSpend, variation);
+                            shopsPlaced++;
+                            shopList.add(city.buildings[i][j]);
+                            buildingsList.add(city.buildings[i][j]);
+                            debug.write("Placed Shop at (" + i + ", " + j + ")");
                         }
-                        case SHOP -> {
-                            if (shopsPlaced < numShops) {
-                                city.gridLayout[i][j] = BuildingType.SHOP.getSymbol();
-                                city.buildings[i][j] = new Shop(i, j, shopAverageSpend, variation);
-                                shopsPlaced++;
-                                shopList.add(city.buildings[i][j]);
-                                buildingsList.add(city.buildings[i][j]);
-                                debug.write("Placed Shop at (" + i + ", " + j + ")");
-                            }
+                    }
+                    case OFFICE -> {
+                        if (officesPlaced < numOffices) {
+                            city.gridLayout[i][j] = BuildingType.OFFICE.getSymbol();
+                            city.buildings[i][j] = new Office(i, j, officeAverageSalary, variation);
+                            officesPlaced++;
+                            officeList.add(city.buildings[i][j]);
+                            buildingsList.add(city.buildings[i][j]);
+                            debug.write("Placed Office at (" + i + ", " + j + ")");
                         }
-                        case OFFICE -> {
-                            if (officesPlaced < numOffices) {
-                                city.gridLayout[i][j] = BuildingType.OFFICE.getSymbol();
-                                city.buildings[i][j] = new Office(i, j, officeAverageSalary, variation);
-                                officesPlaced++;
-                                officeList.add(city.buildings[i][j]);
-                                buildingsList.add(city.buildings[i][j]);
-                                debug.write("Placed Office at (" + i + ", " + j + ")");
-                            }
-                        }
-                        case EMPTY -> {
-                            if (emptySpacesPlaced < (totalSpots - numHouses - numShops - numOffices)) {
-                                city.gridLayout[i][j] = BuildingType.EMPTY.getSymbol();
-                                city.buildings[i][j] = null;
-                                emptySpacesPlaced++;
-                                debug.write("Placed Empty Space at (" + i + ", " + j + ")");
-                            }
+                    }
+                    case EMPTY -> {
+                        if (emptySpacesPlaced < (totalSpots - numHouses - numShops - numOffices)) {
+                            city.gridLayout[i][j] = BuildingType.EMPTY.getSymbol();
+                            city.buildings[i][j] = null;
+                            emptySpacesPlaced++;
+                            debug.write("Placed Empty Space at (" + i + ", " + j + ")");
                         }
                     }
                 }
             }
-            numberOfLoops++;
         }
 
         city.setBuildingsList(buildingsList);
@@ -326,6 +318,10 @@ public class City {
         // Append width and height
         encodedGene.append(gridLayout.length).append(" ").append(gridLayout[0].length).append(" ");
 
+        // Append Starting money and Travel Cost
+        encodedGene.append("SM ").append(this.getStartingMoney()).append(" ");
+        encodedGene.append("TC ").append(this.getTravelCost()).append(" ");
+
         // Append buildings
         for (Building building : buildingsList) {
             if (building instanceof House) {
@@ -338,18 +334,6 @@ public class City {
                 encodedGene.append(((Shop) building).getAverageSpend()).append(" ");
             }
         }
-
-        // Append Starting money and Travel Cost for people
-        encodedGene.append("SM ").append(this.getStartingMoney()).append(" ");
-        encodedGene.append("TC ").append(this.getTravelCost()).append(" ");
-
-        // Append people
-        for (Person person : people) {
-            encodedGene.append("P H ").append(person.getHouse().getX()).append(" ").append(person.getHouse().getY()).append(" ");
-            encodedGene.append("O ").append(person.getOffice().getX()).append(" ").append(person.getOffice().getY()).append(" ");
-        }
-
-        this.gene = encodedGene.toString();
         return encodedGene.toString();
     }
 
@@ -360,7 +344,6 @@ public class City {
      * @return The decoded city.
      */
     public static City decode(String gene) {
-        Debug debug = new Debug();
         String[] parts = gene.split(" ");
         int index = 0;
 
@@ -412,81 +395,23 @@ public class City {
 
                 // Move to the next part
                 index += 3;
-            } else {
-                break; // Break the loop if it's not a building
-            }
-        }
-
-        // Parse Starting money and Travel Cost for people
-        if (index + 2 < parts.length && parts[index].equals("SM") && parts[index + 2].equals("TC")) {
-            // Parse starting money and travel cost (ensure they are not zero)
-            double startingMoney = Math.max(Double.parseDouble(parts[index + 1]), 1.0);
-            double travelCost = Math.max(Double.parseDouble(parts[index + 3]), 1.0);
-            city.setStartingMoney(startingMoney);
-            city.setTravelCost(travelCost);
-            // Move to the next part
-            index += 4;
-        } else {
-            return null; // Return null if the required parts are not found
-        }
-
-        // Parse people
-        while (index < parts.length) {
-            if (parts[index].equals("P")) {
-                // Set the person's house and office using the getBuildingAt method
-                int houseX = Integer.parseInt(parts[index + 2]);
-                int houseY = Integer.parseInt(parts[index + 3]);
-                int officeX = Integer.parseInt(parts[index + 5]);
-                int officeY = Integer.parseInt(parts[index + 6]);
-
-                Person person = null;
-
-                // Ensure the building at (houseX, houseY) is a House
-                Building houseBuilding = city.getBuildingAt(houseX, houseY);
-                if (houseBuilding instanceof House) {
-                    // Ensure the building at (officeX, officeY) is an Office
-                    Building officeBuilding = city.getBuildingAt(officeX, officeY);
-                    if (officeBuilding instanceof Office) {
-                        person = new Person(
-                                city.getStartingMoney(),
-                                city.getTravelCost(),
-                                (House) houseBuilding,
-                                (Office) officeBuilding,
-                                city);
-                    } else {
-                        // Handle the case where the building at (officeX, officeY) is not an Office
-                        debug.write("Invalid building type at " + officeX + " " + officeY + ". Expected Office.");
-                    }
-                } else {
-                    // Handle the case where the building at (houseX, houseY) is not a House
-                    debug.write("Invalid building type at " + houseX + " " + houseY + ". Expected House.");
-                }
-
-                // Check if the person was successfully created
-                if (person != null) {
-                    city.addPerson(person);
-                    debug.write("Successfuly added person to City");
-                }
-
+            } else if (parts[index].equals("SM") && parts[index + 2].equals("TC")) {
+                // Parse Starting money and Travel Cost
+                double startingMoney = Math.max(Double.parseDouble(parts[index + 1]), 1.0);
+                double travelCost = Math.max(Double.parseDouble(parts[index + 3]), 1.0);
+                city.setStartingMoney(startingMoney);
+                city.setTravelCost(travelCost);
                 // Move to the next part
-                index += 7;
+                index += 4;
             } else {
-                break; // Break the loop if it's not a person
+                break; // Break the loop if it's not a building or Starting money/Travel Cost
             }
         }
+
+        // Populate the city with people
+        city.populate(city.getStartingMoney(), city.getTravelCost());
 
         return city;
-    }
-
-    /**
-     * Gets the building at the specified coordinates.
-     *
-     * @param x The x-coordinate.
-     * @param y The y-coordinate.
-     * @return The building at the specified coordinates.
-     */
-    private Building getBuildingAt(int x, int y) {
-        return this.buildings[x][y];
     }
 
     /**
@@ -540,14 +465,11 @@ public class City {
     private static Office findAvailableOffice(City city, int index) {
         ArrayList<Building> offices = city.getOffices();
 
-        Debug debug = new Debug();
-
         if (!offices.isEmpty()) {
             if (index < offices.size()) {
                 return (Office) offices.get(index);
             } else {
                 // If there are more people than offices, assign to a random office
-                Random random = new Random();
                 int randomIndex = random.nextInt(offices.size());
                 return (Office) offices.get(randomIndex);
             }
@@ -624,6 +546,10 @@ public class City {
 
     public void setGene(String gene) {
         this.gene = gene;
+    }
+
+    public String getGene() {
+        return gene;
     }
 
     public double getFitness() {

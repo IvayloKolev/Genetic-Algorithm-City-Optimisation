@@ -56,7 +56,6 @@ public class SelectionTestLinearRanking {
             System.out.println("Inactive People: " + sortedPopulation.get(i).countInactivePeople());
         }
 
-        // Perform Fitness Proportional Selection
         City selectedCity = GeneticAlgorithm.linearRankingSelection(sortedPopulation, 1.0);
 
         // Display the selected city

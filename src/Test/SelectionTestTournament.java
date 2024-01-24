@@ -56,7 +56,6 @@ public class SelectionTestTournament {
             System.out.println("Inactive People: " + sortedPopulation.get(i).countInactivePeople());
         }
 
-        // Perform Fitness Proportional Selection
         City selectedCity = GeneticAlgorithm.tournamentSelection(sortedPopulation, 10);
 
         // Display the selected city
