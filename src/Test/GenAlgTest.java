@@ -8,22 +8,22 @@ import java.util.ArrayList;
  *
  * @author Ivaylo Kolev 2005549
  */
-public class InitialPopulationTest {
+public class GenAlgTest {
 
     public static void main(String[] args) {
 
-        int populationSize = 10;
-        int width = 15;
-        int height = 15;
-        int houses = 20;
-        int shops = 10;
-        double shopAverageSpend = 30;
-        int offices = 5;
+        int populationSize = 20;
+        int width = 35;
+        int height = 35;
+        int houses = 60;
+        int shops = 20;
+        double shopAverageSpend = 70;
+        int offices = 15;
         double officeAverageSalary = 100;
         double variation = 0.1;
 
         int startingMoney = 100;
-        double travelCost = 1.5;
+        double travelCost = 4.0;
 
         double centerBias = 3.0;
 
@@ -47,13 +47,13 @@ public class InitialPopulationTest {
             city.simulate();
         }
 
-        GeneticAlgorithm.evaluateFitness(initialPopulation);
+        ArrayList<City> sortedPopulation = GeneticAlgorithm.evaluateFitness(initialPopulation);
 
-        for (int i = 0; i < initialPopulation.size(); i++) {
+        for (int i = 0; i < sortedPopulation.size(); i++) {
             System.out.println("\nCity " + (i + 1) + "\n");
-            System.out.println("Fitness: " + initialPopulation.get(i).getFitness());
-            System.out.println("Inactive People: " + initialPopulation.get(i).countInactivePeople());
-            System.out.println(initialPopulation.get(i).toStringGridLayout());
+            System.out.println("Fitness: " + sortedPopulation.get(i).getFitness());
+            System.out.println("Inactive People: " + sortedPopulation.get(i).countInactivePeople());
+            System.out.println(sortedPopulation.get(i).toStringGridLayout());
         }
     }
 
