@@ -118,34 +118,34 @@ public class GeneticAlgorithm {
         ArrayList<City> selectedParents;
 
         switch (selectionMethod) {
-            case FITNESS_PROPORTIONAL:
+            case FITNESS_PROPORTIONAL -> {
                 selectedParents = selectParentsUsingFitnessProportional(population, numberOfParents);
-                break;
-            case LINEAR_RANKING:
+            }
+            case LINEAR_RANKING -> {
                 if (parameters.length > 0 && parameters[0] instanceof Double) {
                     double selectionPressure = (Double) parameters[0];
                     selectedParents = selectParentsUsingLinearRanking(population, numberOfParents, selectionPressure);
                 } else {
                     throw new IllegalArgumentException("Linear ranking selection requires a selection pressure parameter.");
                 }
-                break;
-            case TOURNAMENT:
+            }
+            case TOURNAMENT -> {
                 if (parameters.length > 0 && parameters[0] instanceof Integer) {
                     int tournamentSize = (Integer) parameters[0];
                     selectedParents = selectParentsUsingTournament(population, numberOfParents, tournamentSize);
                 } else {
                     throw new IllegalArgumentException("Tournament selection requires a tournament size parameter.");
                 }
-                break;
-            case BOLTZMANN:
+            }
+            case BOLTZMANN -> {
                 if (parameters.length > 0 && parameters[0] instanceof Double) {
                     double temperature = (Double) parameters[0];
                     selectedParents = selectParentsUsingBoltzmann(population, numberOfParents, temperature);
                 } else {
                     throw new IllegalArgumentException("Boltzmann selection requires a temperature parameter.");
                 }
-                break;
-            default:
+            }
+            default ->
                 throw new IllegalArgumentException("Invalid selection method: " + selectionMethod);
         }
 
@@ -322,74 +322,66 @@ public class GeneticAlgorithm {
         return totalProb;
     }
 
-    /**
-     * Placeholder method for crossover (recombination) of parent cities to
-     * create offspring.
-     *
-     * @param parents The list of parent cities.
-     * @return A list of offspring cities.
-     */
     public static ArrayList<City> crossover(ArrayList<City> parents) {
-        if (parents.size() < 2) {
-            throw new IllegalArgumentException("Crossover requires at least two parents.");
-        }
-
-        int geneLength = parents.get(0).getGene().length();
-
-        // Define the range for the crossover point (after width and height, and before "SM")
-        int crossoverMin = parents.get(0).getGene().indexOf(" ", parents.get(0).getGene().indexOf(" ") + 1) + 1;
-        int crossoverMax = geneLength - 3; // 3 is the length of "SM " + value + space
-
-        // Random crossover point within the defined range
-        int crossoverPoint = random.nextInt(crossoverMax - crossoverMin + 1) + crossoverMin;
-
-        ArrayList<City> offspring = new ArrayList<>();
-
-        for (int i = 0; i < parents.size(); i += 2) {
-            if (i + 1 < parents.size()) {
-                // Extract genes of two parents
-                String gene1 = parents.get(i).getGene();
-                String gene2 = parents.get(i + 1).getGene();
-
-                // Perform crossover at the chosen point
-                String offspringGene1 = gene1.substring(0, crossoverPoint) + gene2.substring(crossoverPoint);
-                String offspringGene2 = gene2.substring(0, crossoverPoint) + gene1.substring(crossoverPoint);
-
-                // Create offspring cities and add them to the list
-                City offspringCity1 = City.decode(offspringGene1);
-                City offspringCity2 = City.decode(offspringGene2);
-
-                offspring.add(offspringCity1);
-                offspring.add(offspringCity2);
-            } else {
-                // If there is an odd number of parents, add the last parent as is
-                offspring.add(parents.get(i));
-            }
-        }
-
-        return offspring;
+        return null;
     }
 
     /**
-     * Chooses a crossover point for the gene representation.
+     * Single-Point Crossover.
      *
-     * @param gene The gene representation of the city.
-     * @return The index of the chosen crossover point.
+     * @param parent1 The first parent's gene.
+     * @param parent2 The second parent's gene.
+     * @return An arrayList containing two strings representing the offspring
+     * genes.
      */
-    public static int chooseCrossoverPoint(String gene) {
-        int spaceCount = 0;
-        int index = 0;
+    public static ArrayList<String> singlePointCrossover(String parent1, String parent2) {
+        int crossoverPoint = chooseCrossoverPoint(splitGene(parent1));
+        ArrayList<String> output = new ArrayList();
 
-        // Iterate through the gene until the sixth space is encountered
-        while (spaceCount < 6 && index < gene.length()) {
-            if (gene.charAt(index) == ' ') {
-                spaceCount++;
-            }
-            index++;
-        }
+        StringBuilder child1 = new StringBuilder();
+        StringBuilder child2 = new StringBuilder();
 
-        // Ensure the index is within the bounds of the gene
-        return Math.min(index, gene.length());
+        // Copy genes up to the crossover point
+        child1.append(parent1, 0, crossoverPoint);
+        child2.append(parent2, 0, crossoverPoint);
+
+        // Copy remaining genes
+        child1.append(parent2, crossoverPoint, parent2.length());
+        child2.append(parent1, crossoverPoint, parent1.length());
+
+        output.add(child1.toString());
+        output.add(child2.toString());
+
+        return output;
+    }
+
+    /**
+     * Two-Point Crossover.
+     *
+     * @param parent1 The first parent's gene.
+     * @param parent2 The second parent's gene.
+     * @return An array containing two strings representing the offspring genes.
+     */
+    public static String[] twoPointCrossover(String parent1, String parent2) {
+        int crossoverPoint1 = chooseCrossoverPoint(splitGene(parent1));
+        int crossoverPoint2 = chooseCrossoverPoint(splitGene(parent2));
+
+        StringBuilder child1 = new StringBuilder();
+        StringBuilder child2 = new StringBuilder();
+
+        // Copy genes up to the first crossover point
+        child1.append(parent1, 0, crossoverPoint1);
+        child2.append(parent2, 0, crossoverPoint1);
+
+        // Copy genes between the two crossover points
+        child1.append(parent2, crossoverPoint1, crossoverPoint2);
+        child2.append(parent1, crossoverPoint1, crossoverPoint2);
+
+        // Copy remaining genes
+        child1.append(parent1, crossoverPoint2, parent1.length());
+        child2.append(parent2, crossoverPoint2, parent2.length());
+
+        return new String[]{child1.toString(), child2.toString()};
     }
 
     /**
@@ -440,14 +432,49 @@ public class GeneticAlgorithm {
         return substrings;
     }
 
+    /**
+     * Chooses a crossover point for the gene representation.
+     *
+     * @param geneParts ArrayList of substrings containing city and building
+     * information.
+     * @return The index of the chosen crossover point.
+     */
+    public static int chooseCrossoverPoint(ArrayList<String> geneParts) {
+        // Ensure the index is within the bounds of the gene parts, skipping the first part
+        return Math.min(1 + random.nextInt(geneParts.size() - 1), geneParts.size());
+    }
+
+    /**
+     * Splits the gene into two parts at the given crossover point.
+     *
+     * @param geneParts ArrayList of substrings containing city and building
+     * information.
+     * @param crossoverPoint The index of the chosen crossover point.
+     * @return An array containing two strings representing the two parts of the
+     * gene.
+     */
+    public static String[] splitGeneAtCrossoverPoint(ArrayList<String> geneParts, int crossoverPoint) {
+        StringBuilder part1 = new StringBuilder();
+        StringBuilder part2 = new StringBuilder();
+
+        // Append the first part of the gene
+        for (int i = 0; i < crossoverPoint; i++) {
+            part1.append(geneParts.get(i)).append(" ");
+        }
+
+        // Append the second part of the gene
+        for (int i = crossoverPoint; i < geneParts.size(); i++) {
+            part2.append(geneParts.get(i)).append(" ");
+        }
+
+        // Trim any trailing spaces
+        String[] result = {part1.toString().trim(), part2.toString().trim()};
+        return result;
+    }
+
     // Placeholder method for applying mutation to the offspring cities
     public static void mutate(ArrayList<City> offspring) {
         // Implement mutation logic here
-    }
-
-    // Placeholder method for replacing the old population with the new generation
-    public static void replacePopulation(ArrayList<City> population, List<City> newGeneration) {
-        // Implement population replacement logic here
     }
 
     // Placeholder method for running the genetic algorithm

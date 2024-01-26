@@ -114,7 +114,7 @@ public class City {
      * Initializes the grid layout with a pattern of roads and spaces for
      * buildings.
      */
-    public void initializeRoadGrid() {
+    public final void initializeRoadGrid() {
         if (gridLayout == null) {
             gridLayout = new char[width][height];
         }
@@ -280,7 +280,7 @@ public class City {
      * @param travelCost The cost of travel for each person.
      */
     public void populate(double startingMoney, double travelCost) {
-        ArrayList<Person> peopleList = new ArrayList<>();
+        this.people.clear();
         this.setStartingMoney(startingMoney);
         this.setTravelCost(travelCost);
         for (int i = 0; i < houses.size(); i++) {
@@ -289,7 +289,6 @@ public class City {
 
             Person person = new Person(startingMoney, travelCost, house, office, this);
 
-            peopleList.add(person);
             people.add(person);
         }
     }
@@ -369,23 +368,26 @@ public class City {
                 int y = Integer.parseInt(parts[index + 2]);
 
                 // Check building type
-                if (parts[index].equals("H")) {
-                    building = new House(x, y);
-                } else if (parts[index].equals("O")) {
-                    // Parse salary (ensure it's not zero)
-                    double salary = Math.max(Double.parseDouble(parts[index + 3]), 1.0);
-                    building = new Office(x, y, salary, 0.0);
-                    // Skip the salary part
-                    index++;
-                } else if (parts[index].equals("S")) {
-                    // Parse average spend (ensure it's not zero)
-                    double averageSpend = Math.max(Double.parseDouble(parts[index + 3]), 1.0);
-                    building = new Shop(x, y, averageSpend, 0.0);
-                    // Skip the average spend part
-                    index++;
-                } else {
-                    // Handle the case for Road
-                    building = new Road(x, y);
+                switch (parts[index]) {
+                    case "H" -> {
+                        building = new House(x, y);
+                    }
+                    case "O" -> {
+                        // Parse salary (ensure it's not zero)
+                        double salary = Math.max(Double.parseDouble(parts[index + 3]), 1.0);
+                        building = new Office(x, y, salary, 0.0);
+                        // Skip the salary part
+                        index++;
+                    }
+                    case "S" -> {
+                        // Parse average spend (ensure it's not zero)
+                        double averageSpend = Math.max(Double.parseDouble(parts[index + 3]), 1.0);
+                        building = new Shop(x, y, averageSpend, 0.0);
+                        // Skip the average spend part
+                        index++;
+                    }
+                    default -> // Handle the case for Road
+                        building = new Road(x, y);
                 }
 
                 // Add the building to the city
