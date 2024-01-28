@@ -166,7 +166,11 @@ public class City {
         int totalSpots = (width / 2) * (height / 2);
 
         if (numHouses + numShops + numOffices > totalSpots) {
-            throw new IllegalArgumentException("Total number of buildings exceeds available spots.");
+            throw new IllegalArgumentException(
+                    "Total number of buildings exceeds available spots:"
+                    + "\nTotal number of buildings requested:" + (numHouses + numShops + numOffices)
+                    + "\nTotal spots: " + totalSpots);
+
         }
 
         int housesPlaced = 0;
@@ -560,6 +564,10 @@ public class City {
 
     public void setFitness(double fitness) {
         this.fitness = fitness;
+    }
+
+    public char[][] getGridLayout() {
+        return gridLayout;
     }
 
 }

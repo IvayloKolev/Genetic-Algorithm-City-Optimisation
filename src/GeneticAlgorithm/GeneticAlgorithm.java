@@ -9,7 +9,9 @@ import Debug.Debug;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Random;
 
 public class GeneticAlgorithm {
@@ -322,7 +324,7 @@ public class GeneticAlgorithm {
         return totalProb;
     }
 
-    public static ArrayList<City> crossover(ArrayList<City> parents) {
+    public static ArrayList<City> crossover(String parent1, String parent2) {
         return null;
     }
 
@@ -331,7 +333,7 @@ public class GeneticAlgorithm {
      *
      * @param parent1 The first parent's gene.
      * @param parent2 The second parent's gene.
-     * @return An arrayList containing two strings representing the offspring
+     * @return An ArrayList containing two strings representing the offspring
      * genes.
      */
     public static ArrayList<String> singlePointCrossover(String parent1, String parent2) {
@@ -352,6 +354,9 @@ public class GeneticAlgorithm {
         output.add(child1.toString());
         output.add(child2.toString());
 
+        // Resolve overlaps for each child
+        //resolveOverlaps(splitGene(output.get(0)));
+        //resolveOverlaps(splitGene(output.get(1)));
         return output;
     }
 
@@ -360,11 +365,21 @@ public class GeneticAlgorithm {
      *
      * @param parent1 The first parent's gene.
      * @param parent2 The second parent's gene.
-     * @return An array containing two strings representing the offspring genes.
+     * @return An ArrayList containing two strings representing the offspring
+     * genes.
      */
-    public static String[] twoPointCrossover(String parent1, String parent2) {
+    public static ArrayList<String> twoPointCrossover(String parent1, String parent2) {
         int crossoverPoint1 = chooseCrossoverPoint(splitGene(parent1));
         int crossoverPoint2 = chooseCrossoverPoint(splitGene(parent2));
+
+        // Ensure crossoverPoint2 is greater than crossoverPoint1
+        if (crossoverPoint2 < crossoverPoint1) {
+            int temp = crossoverPoint1;
+            crossoverPoint1 = crossoverPoint2;
+            crossoverPoint2 = temp;
+        }
+
+        ArrayList<String> output = new ArrayList<>();
 
         StringBuilder child1 = new StringBuilder();
         StringBuilder child2 = new StringBuilder();
@@ -381,7 +396,10 @@ public class GeneticAlgorithm {
         child1.append(parent1, crossoverPoint2, parent1.length());
         child2.append(parent2, crossoverPoint2, parent2.length());
 
-        return new String[]{child1.toString(), child2.toString()};
+        output.add(child1.toString());
+        output.add(child2.toString());
+
+        return output;
     }
 
     /**
@@ -399,7 +417,7 @@ public class GeneticAlgorithm {
         // Add the first substring with city information
         StringBuilder cityInfo = new StringBuilder();
         int index = 0;
-        while (index < parts.length && !parts[index].equals("H") && !parts[index].equals("S") && !parts[index].equals("O")) {
+        while (index < parts.length && !parts[index].equals("SM")) {
             cityInfo.append(parts[index]).append(" ");
             index++;
         }
@@ -408,6 +426,13 @@ public class GeneticAlgorithm {
         while (index < parts.length) {
             StringBuilder buildingInfo = new StringBuilder();
             buildingInfo.append(parts[index++]).append(" ");
+
+            if (parts[index - 1].equals("SM")) {
+                buildingInfo.append(parts[index++]).append(" ");
+            }
+            if (parts[index - 1].equals("TC")) {
+                buildingInfo.append(parts[index++]).append(" ");
+            }
 
             if (parts[index - 1].equals("H")) {
                 buildingInfo.append(parts[index++]).append(" ");
@@ -481,4 +506,176 @@ public class GeneticAlgorithm {
     public static void runGeneticAlgorithm(int populationSize, int generations, int cityWidth, int cityHeight) {
         // Implement the overall genetic algorithm process here
     }
+
+    /**
+     * Resolves overlaps in a city gene by moving buildings to free spots with
+     * odd-numbered coordinates.
+     *
+     * @param geneParts The gene parts representing the city structure.
+     */
+    private static void resolveOverlaps(ArrayList<String> geneParts) {
+        // Skip the first 3 parts of the gene as they cannot have buildings
+        for (int i = 3; i < geneParts.size(); i++) {
+            String currentBuilding = geneParts.get(i);
+
+            // Split each individual building
+            String[] buildingInfo = currentBuilding.split(" ");
+
+            // Check if the split operation produced a non-empty array and has the expected length
+            if (buildingInfo.length >= 3) {
+                // Attempt to parse x and y coordinates
+                try {
+                    int x = Integer.parseInt(buildingInfo[1]);
+                    int y = Integer.parseInt(buildingInfo[2]);
+
+                    // Check if the coordinates are already occupied
+                    ArrayList<String> buildingsAtCoordinates = findBuildingsAtCoordinates(geneParts, i, x, y);
+
+                    if (!buildingsAtCoordinates.isEmpty()) {
+                        debug.write("Overlap detected at coordinates: " + x + " " + y);
+                        resolveOverlap(buildingsAtCoordinates, geneParts);
+                    }
+                } catch (NumberFormatException e) {
+                    // Handle the case where x or y is not a valid integer
+                    debug.write("Invalid coordinates in building: " + currentBuilding);
+                }
+            } else {
+                // Handle the case where buildingInfo does not have enough elements
+                debug.write("Invalid building format: " + currentBuilding);
+            }
+        }
+    }
+
+    /**
+     * Finds buildings at the specified coordinates, excluding the building at
+     * the given index.
+     *
+     * @param geneParts The gene parts representing the city structure.
+     * @param currentIndex The index of the current building to exclude.
+     * @param x The x-coordinate.
+     * @param y The y-coordinate.
+     * @return A list of buildings at the specified coordinates.
+     */
+    private static ArrayList<String> findBuildingsAtCoordinates(ArrayList<String> geneParts, int currentIndex, int x, int y) {
+        ArrayList<String> buildingsAtCoordinates = new ArrayList<>();
+
+        for (int j = 3; j < geneParts.size(); j++) {
+            if (j != currentIndex) {
+                String otherBuilding = geneParts.get(j);
+                String[] buildingInfo = otherBuilding.split(" ");
+
+                // Check if the split operation produced a non-empty array and has the expected length
+                if (buildingInfo.length >= 3) {
+                    int otherX = Integer.parseInt(buildingInfo[1]);
+                    int otherY = Integer.parseInt(buildingInfo[2]);
+
+                    if (x == otherX && y == otherY) {
+                        buildingsAtCoordinates.add(otherBuilding);
+                    }
+                }
+            }
+        }
+
+        return buildingsAtCoordinates;
+    }
+
+    /**
+     * Resolves overlap by moving buildings to free spots with odd-numbered
+     * coordinates.
+     *
+     * @param buildingsAtCoordinates The list of buildings at overlapping
+     * coordinates.
+     * @param geneParts The gene parts representing the city structure.
+     */
+    private static void resolveOverlap(ArrayList<String> buildingsAtCoordinates, ArrayList<String> geneParts) {
+        for (int i = 1; i < buildingsAtCoordinates.size(); i++) {
+            String overlappingBuilding = buildingsAtCoordinates.get(i);
+            debug.write("Moving building to resolve overlap: " + overlappingBuilding);
+
+            // Move the building to a free spot with an odd-numbered x and y coordinate
+            int newX = findFreeCoordinate(geneParts, Integer.parseInt(overlappingBuilding.split(" ")[1]), true);
+            int newY = findFreeCoordinate(geneParts, Integer.parseInt(overlappingBuilding.split(" ")[2]), false);
+
+            // Ensure newX and newY remain odd
+            newX = (newX % 2 == 0) ? newX + 1 : newX;
+            newY = (newY % 2 == 0) ? newY + 1 : newY;
+
+            String adjustedBuildingInfo = overlappingBuilding.replaceFirst("\\d+ \\d+", newX + " " + newY);
+            updateGeneParts(geneParts, overlappingBuilding, adjustedBuildingInfo);
+        }
+    }
+
+    /**
+     * Finds a free coordinate for a building, ensuring it remains odd. Uses the
+     * calculateX and caluclateY helper methods for readability.
+     *
+     * @param geneParts The gene parts representing the city structure.
+     * @param coordinate The initial coordinate to start searching.
+     * @param isX True if searching for a free x-coordinate, false for
+     * y-coordinate.
+     * @return The free coordinate.
+     */
+    private static int findFreeCoordinate(ArrayList<String> geneParts, int coordinate, boolean isX) {
+        int newCoordinate = coordinate;
+
+        int baseX = Integer.parseInt(geneParts.get(3).split(" ")[1]);
+        int baseY = Integer.parseInt(geneParts.get(3).split(" ")[2]);
+
+        while (isCoordinateOccupied(geneParts, calculateX(isX, newCoordinate, baseX), calculateY(isX, newCoordinate, baseY))) {
+            newCoordinate += 2; // Move to the next odd-numbered coordinate
+        }
+
+        return newCoordinate;
+    }
+
+    private static int calculateX(boolean isX, int newCoordinate, int baseX) {
+        if (isX) {
+            return newCoordinate;
+        } else {
+            return baseX;
+        }
+    }
+
+    private static int calculateY(boolean isX, int newCoordinate, int baseY) {
+        if (isX) {
+            return baseY;
+        } else {
+            return newCoordinate;
+        }
+    }
+
+    /**
+     * Checks if a coordinate is occupied by any building in the gene parts.
+     *
+     * @param geneParts The gene parts representing the city structure.
+     * @param x The x-coordinate.
+     * @param y The y-coordinate.
+     * @return True if the coordinate is occupied, false otherwise.
+     */
+    private static boolean isCoordinateOccupied(ArrayList<String> geneParts, int x, int y) {
+        return geneParts.stream()
+                .skip(3) // Skip the first 3 parts of the gene
+                .anyMatch(building -> {
+                    int buildingX = Integer.parseInt(building.split(" ")[1]);
+                    int buildingY = Integer.parseInt(building.split(" ")[2]);
+                    return buildingX == x && buildingY == y;
+                });
+    }
+
+    /**
+     * Updates the gene parts with the new building information.
+     *
+     * @param geneParts The gene parts representing the city structure.
+     * @param oldBuildingInfo The old information of the building.
+     * @param newBuildingInfo The new information of the building.
+     */
+    private static void updateGeneParts(ArrayList<String> geneParts, String oldBuildingInfo, String newBuildingInfo) {
+        for (int i = 3; i < geneParts.size(); i++) {
+            if (geneParts.get(i).equals(oldBuildingInfo)) {
+                geneParts.set(i, newBuildingInfo);
+                break;
+            }
+        }
+    }
+
 }

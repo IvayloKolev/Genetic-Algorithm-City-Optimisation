@@ -1,15 +1,18 @@
 package Test;
 
 import City.City;
-import static City.City.decode;
+import City.CityVisualization;
+import java.io.IOException;
 
 /**
  *
  * @author Ivaylo Kolev 2005549
  */
-public class GeneTest2 {
+public class imgTest {
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws IOException {
+
+        CityVisualization cv = new CityVisualization();
 
         int width = 11;
         int height = 11;
@@ -39,15 +42,9 @@ public class GeneTest2 {
         city.populate(startingMoney, travelCost);
 
         System.out.println(city.toStringGridLayout());
+        
+        cv.displayCity(city);
 
-        String gene = city.encode();
-        System.out.println("Gene: \n" + gene);
-
-        City decodedCity = new City(decode(gene));
-
-        char[][] gridLayout = decodedCity.getGridLayout();
-
-        System.out.println(gridLayout[0][0]);
     }
 
 }
