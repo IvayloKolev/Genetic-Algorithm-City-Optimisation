@@ -30,7 +30,7 @@ public class City {
     private ArrayList<Building> houses;
     private ArrayList<Building> offices;
     private ArrayList<Building> shops;
-    private String gene;
+    private Gene gene;
     private double fitness;
 
     private static final Random random = new Random();
@@ -271,7 +271,6 @@ public class City {
         debug.write("Total Houses (Placed/Requested): " + housesPlaced + "/" + numHouses);
         debug.write("Total Shops (Placed/Requested): " + shopsPlaced + "/" + numShops);
         debug.write("Total Offices (Placed/Requested): " + officesPlaced + "/" + numOffices);
-        debug.write("Total Empty Spaces: " + emptySpacesPlaced);
 
         return city;
     }
@@ -311,116 +310,6 @@ public class City {
     }
 
     /**
-     * Encodes the city into a gene representation.
-     *
-     * @return A string representing the gene of the city.
-     */
-    public String encode() {
-        StringBuilder encodedGene = new StringBuilder();
-
-        // Append width and height
-        encodedGene.append(gridLayout.length).append(" ").append(gridLayout[0].length).append(" ");
-
-        // Append Starting money and Travel Cost
-        encodedGene.append("SM ").append(this.getStartingMoney()).append(" ");
-        encodedGene.append("TC ").append(this.getTravelCost()).append(" ");
-
-        // Append buildings
-        for (Building building : buildingsList) {
-            if (building instanceof House) {
-                encodedGene.append("H ").append(building.getX()).append(" ").append(building.getY()).append(" ");
-            } else if (building instanceof Office) {
-                encodedGene.append("O ").append(building.getX()).append(" ").append(building.getY()).append(" ");
-                encodedGene.append(((Office) building).getAverageSalary()).append(" ");
-            } else if (building instanceof Shop) {
-                encodedGene.append("S ").append(building.getX()).append(" ").append(building.getY()).append(" ");
-                encodedGene.append(((Shop) building).getAverageSpend()).append(" ");
-            }
-        }
-        return encodedGene.toString();
-    }
-
-    /**
-     * Decodes the gene into a city.
-     *
-     * @param gene The gene representing the city.
-     * @return The decoded city.
-     */
-    public static City decode(String gene) {
-        String[] parts = gene.split(" ");
-        int index = 0;
-
-        // Parse width and height
-        int width = Integer.parseInt(parts[index++]);
-        int height = Integer.parseInt(parts[index++]);
-
-        City city = new City(width, height);
-        city.gene = gene;
-
-        // Initialize gridLayout and buildings arrays
-        city.gridLayout = new char[width][height];
-        city.buildings = new Building[width][height];
-
-        city.initializeRoadGrid();
-
-        // Parse buildings
-        while (index < parts.length) {
-            // Check if it's a building
-            if (parts[index].equals("H") || parts[index].equals("O") || parts[index].equals("S")) {
-                Building building;
-                int x = Integer.parseInt(parts[index + 1]);
-                int y = Integer.parseInt(parts[index + 2]);
-
-                // Check building type
-                switch (parts[index]) {
-                    case "H" -> {
-                        building = new House(x, y);
-                    }
-                    case "O" -> {
-                        // Parse salary (ensure it's not zero)
-                        double salary = Math.max(Double.parseDouble(parts[index + 3]), 1.0);
-                        building = new Office(x, y, salary, 0.0);
-                        // Skip the salary part
-                        index++;
-                    }
-                    case "S" -> {
-                        // Parse average spend (ensure it's not zero)
-                        double averageSpend = Math.max(Double.parseDouble(parts[index + 3]), 1.0);
-                        building = new Shop(x, y, averageSpend, 0.0);
-                        // Skip the average spend part
-                        index++;
-                    }
-                    default -> // Handle the case for Road
-                        building = new Road(x, y);
-                }
-
-                // Add the building to the city
-                city.addBuilding(building);
-                city.gridLayout[x][y] = building.getType().getSymbol();
-                city.buildings[x][y] = building;
-
-                // Move to the next part
-                index += 3;
-            } else if (parts[index].equals("SM") && parts[index + 2].equals("TC")) {
-                // Parse Starting money and Travel Cost
-                double startingMoney = Math.max(Double.parseDouble(parts[index + 1]), 1.0);
-                double travelCost = Math.max(Double.parseDouble(parts[index + 3]), 1.0);
-                city.setStartingMoney(startingMoney);
-                city.setTravelCost(travelCost);
-                // Move to the next part
-                index += 4;
-            } else {
-                break; // Break the loop if it's not a building or Starting money/Travel Cost
-            }
-        }
-
-        // Populate the city with people
-        city.populate(city.getStartingMoney(), city.getTravelCost());
-
-        return city;
-    }
-
-    /**
      * Gets a string representation of the city grid layout.
      *
      * @return A string representing the city grid layout.
@@ -447,6 +336,7 @@ public class City {
         for (Person person : peopleInCity) {
             totalMoney += person.getMoney();
         }
+        debug.write("Total money in this City: " + totalMoney);
         return totalMoney;
     }
 
@@ -459,6 +349,7 @@ public class City {
                 count++;
             }
         }
+        debug.write("Total inactive people in this City: " + count);
         return count;
     }
 
@@ -485,13 +376,62 @@ public class City {
         }
     }
 
-    // Getters
-    public void addPerson(Person person) {
-        this.people.add(person);
+    // Getters and Setters
+    // Getters and Setters
+    public int getWidth() {
+        return width;
+    }
+
+    public void setWidth(int width) {
+        this.width = width;
+    }
+
+    public int getHeight() {
+        return height;
+    }
+
+    public void setHeight(int height) {
+        this.height = height;
+    }
+
+    public char[][] getGridLayout() {
+        return gridLayout;
+    }
+
+    public void setGridLayout(char[][] gridLayout) {
+        this.gridLayout = gridLayout;
+    }
+
+    public Building[][] getBuildings() {
+        return buildings;
+    }
+
+    public void setBuildings(Building[][] buildings) {
+        this.buildings = buildings;
+    }
+
+    public ArrayList<Building> getBuildingsList() {
+        return buildingsList;
+    }
+
+    public void setBuildingsList(ArrayList<Building> buildingsList) {
+        this.buildingsList = buildingsList;
     }
 
     public void addBuilding(Building building) {
         this.buildingsList.add(building);
+
+        switch (building.getType()) {
+            case HOUSE -> {
+                this.houses.add(building);
+            }
+            case OFFICE -> {
+                this.offices.add(building);
+            }
+            case SHOP -> {
+                this.shops.add(building);
+            }
+        }
     }
 
     public ArrayList<Person> getPeople() {
@@ -500,6 +440,26 @@ public class City {
 
     public void setPeople(ArrayList<Person> people) {
         this.people = people;
+    }
+
+    public void addPerson(Person person) {
+        this.people.add(person);
+    }
+
+    public double getStartingMoney() {
+        return startingMoney;
+    }
+
+    public void setStartingMoney(double startingMoney) {
+        this.startingMoney = startingMoney;
+    }
+
+    public double getTravelCost() {
+        return travelCost;
+    }
+
+    public void setTravelCost(double travelCost) {
+        this.travelCost = travelCost;
     }
 
     public ArrayList<Building> getHouses() {
@@ -526,36 +486,12 @@ public class City {
         this.shops = shops;
     }
 
-    public ArrayList<Building> getBuildingsList() {
-        return buildingsList;
-    }
-
-    public void setBuildingsList(ArrayList<Building> buildingsList) {
-        this.buildingsList = buildingsList;
-    }
-
-    public double getStartingMoney() {
-        return startingMoney;
-    }
-
-    public void setStartingMoney(double startingMoney) {
-        this.startingMoney = startingMoney;
-    }
-
-    public double getTravelCost() {
-        return travelCost;
-    }
-
-    public void setTravelCost(double travelCost) {
-        this.travelCost = travelCost;
-    }
-
-    public void setGene(String gene) {
-        this.gene = gene;
-    }
-
-    public String getGene() {
+    public Gene getGene() {
         return gene;
+    }
+
+    public void setGene(Gene gene) {
+        this.gene = gene;
     }
 
     public double getFitness() {
@@ -566,8 +502,9 @@ public class City {
         this.fitness = fitness;
     }
 
-    public char[][] getGridLayout() {
-        return gridLayout;
+    @Override
+    public String toString() {
+        return "City{" + "width=" + width + ", height=" + height + ", gridLayout=" + gridLayout + ", buildings=" + buildings + ", buildingsList=" + buildingsList + ", people=" + people + ", startingMoney=" + startingMoney + ", travelCost=" + travelCost + ", houses=" + houses + ", offices=" + offices + ", shops=" + shops + ", gene=" + gene + ", fitness=" + fitness + '}';
     }
 
 }

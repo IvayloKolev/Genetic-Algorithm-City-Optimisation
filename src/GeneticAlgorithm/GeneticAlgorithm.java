@@ -4,14 +4,14 @@ package GeneticAlgorithm;
  *
  * @author Ivaylo Kolev 2005549
  */
+import Building.Building;
 import City.City;
+import City.Gene;
 import Debug.Debug;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Random;
 
 public class GeneticAlgorithm {
@@ -65,24 +65,11 @@ public class GeneticAlgorithm {
                     variation,
                     centerBias);
             initialPopulation.add(city);
-        }
 
-        initializeCityPopulation(initialPopulation, startingMoney, travelCost);
-
-        return initialPopulation;
-    }
-
-    /**
-     * Populates the given cities with starting money and travel cost.
-     *
-     * @param cities The list of cities to populate.
-     * @param startingMoney The starting money for each city.
-     * @param travelCost The travel cost for each city.
-     */
-    private void initializeCityPopulation(ArrayList<City> cities, double startingMoney, double travelCost) {
-        for (City city : cities) {
             city.populate(startingMoney, travelCost);
         }
+
+        return initialPopulation;
     }
 
     /**
@@ -105,6 +92,23 @@ public class GeneticAlgorithm {
         Collections.sort(population, Comparator.comparingDouble(City::getFitness).reversed());
 
         return population;
+    }
+
+    /**
+     * Evaluates the fitness of a single city.
+     *
+     * @param city The city to evaluate.
+     * @return The fitness value for the city.
+     */
+    public double evaluateSingleCityFitness(City city) {
+        double fitness = city.getTotalMoney() - (city.countInactivePeople() * 100);
+
+        // If fitness is negative, set it to 0
+        fitness = Math.max(0, Math.floor(fitness * 100) / 100);
+
+        city.setFitness(fitness);
+
+        return fitness;
     }
 
     /**
@@ -324,177 +328,140 @@ public class GeneticAlgorithm {
         return totalProb;
     }
 
-    public static ArrayList<City> crossover(String parent1, String parent2) {
-        return null;
+    public static ArrayList<City> crossover(Gene parent1, Gene parent2, CrossoverMethod crossoverMethod) {
+        ArrayList<City> offspring = new ArrayList<>();
+
+        switch (crossoverMethod) {
+            case ONE_POINT -> {
+                // Implement one-point crossover logic
+                // ...
+            }
+            case TWO_POINT -> {
+                // Implement two-point crossover logic
+                // ...
+            }
+            case UNIFORM -> {
+                // Implement uniform crossover logic
+                // ...
+            }
+            default ->
+                throw new IllegalArgumentException("Invalid crossover method: " + crossoverMethod);
+        }
+
+        return offspring;
     }
 
     /**
-     * Single-Point Crossover.
+     * One-point crossover method.
      *
-     * @param parent1 The first parent's gene.
-     * @param parent2 The second parent's gene.
-     * @return An ArrayList containing two strings representing the offspring
-     * genes.
+     * @param parent1 The first parent gene.
+     * @param parent2 The second parent gene.
+     * @return An ArrayList containing the offspring resulting from crossover.
      */
-    public static ArrayList<String> singlePointCrossover(String parent1, String parent2) {
-        int crossoverPoint = chooseCrossoverPoint(splitGene(parent1));
-        ArrayList<String> output = new ArrayList();
+    public static ArrayList<Gene> onePointCrossover(Gene parent1, Gene parent2) {
+        // Select a crossover point
+        int crossoverPoint = selectCrossoverPoint(parent1, parent2);
 
-        StringBuilder child1 = new StringBuilder();
-        StringBuilder child2 = new StringBuilder();
+        // Create offspring 1
+        ArrayList<Building> offspringBuildings1 = new ArrayList<>(parent1.getBuildingsList().subList(0, crossoverPoint));
+        offspringBuildings1.addAll(parent2.getBuildingsList().subList(crossoverPoint, parent2.getBuildingsList().size()));
 
-        // Copy genes up to the crossover point
-        child1.append(parent1, 0, crossoverPoint);
-        child2.append(parent2, 0, crossoverPoint);
+        // Create offspring 2
+        ArrayList<Building> offspringBuildings2 = new ArrayList<>(parent2.getBuildingsList().subList(0, crossoverPoint));
+        offspringBuildings2.addAll(parent1.getBuildingsList().subList(crossoverPoint, parent1.getBuildingsList().size()));
 
-        // Copy remaining genes
-        child1.append(parent2, crossoverPoint, parent2.length());
-        child2.append(parent1, crossoverPoint, parent1.length());
+        // Create gene objects for the offspring
+        Gene offspring1 = new Gene();
+        offspring1.setWidth(parent1.getWidth());
+        offspring1.setHeight(parent1.getHeight());
+        offspring1.setStartingMoney(parent1.getStartingMoney());
+        offspring1.setTravelCost(parent1.getTravelCost());
+        offspring1.setBuildingsList(offspringBuildings1);
 
-        output.add(child1.toString());
-        output.add(child2.toString());
+        Gene offspring2 = new Gene();
+        offspring2.setWidth(parent2.getWidth());
+        offspring2.setHeight(parent2.getHeight());
+        offspring2.setStartingMoney(parent2.getStartingMoney());
+        offspring2.setTravelCost(parent2.getTravelCost());
+        offspring2.setBuildingsList(offspringBuildings2);
 
-        // Resolve overlaps for each child
-        //resolveOverlaps(splitGene(output.get(0)));
-        //resolveOverlaps(splitGene(output.get(1)));
-        return output;
+        // Create a list to store the offspring
+        ArrayList<Gene> offspringList = new ArrayList<>();
+        offspringList.add(offspring1);
+        offspringList.add(offspring2);
+
+        return offspringList;
     }
 
     /**
-     * Two-Point Crossover.
+     * Two-point crossover method.
      *
-     * @param parent1 The first parent's gene.
-     * @param parent2 The second parent's gene.
-     * @return An ArrayList containing two strings representing the offspring
-     * genes.
+     * @param parent1 The first parent gene.
+     * @param parent2 The second parent gene.
+     * @return An ArrayList containing the offspring resulting from crossover.
      */
-    public static ArrayList<String> twoPointCrossover(String parent1, String parent2) {
-        int crossoverPoint1 = chooseCrossoverPoint(splitGene(parent1));
-        int crossoverPoint2 = chooseCrossoverPoint(splitGene(parent2));
+    public static ArrayList<Gene> twoPointCrossover(Gene parent1, Gene parent2) {
+        // Select two distinct crossover points
+        int crossoverPoint1 = selectCrossoverPoint(parent1, parent2);
+        int crossoverPoint2 = selectCrossoverPoint(parent1, parent2);
 
-        // Ensure crossoverPoint2 is greater than crossoverPoint1
-        if (crossoverPoint2 < crossoverPoint1) {
+        // Ensure that crossoverPoint1 is smaller than crossoverPoint2
+        if (crossoverPoint1 > crossoverPoint2) {
             int temp = crossoverPoint1;
             crossoverPoint1 = crossoverPoint2;
             crossoverPoint2 = temp;
         }
 
-        ArrayList<String> output = new ArrayList<>();
+        // Create offspring 1
+        ArrayList<Building> offspringBuildings1 = new ArrayList<>(parent1.getBuildingsList().subList(0, crossoverPoint1));
+        offspringBuildings1.addAll(parent2.getBuildingsList().subList(crossoverPoint1, crossoverPoint2));
+        offspringBuildings1.addAll(parent1.getBuildingsList().subList(crossoverPoint2, parent1.getBuildingsList().size()));
 
-        StringBuilder child1 = new StringBuilder();
-        StringBuilder child2 = new StringBuilder();
+        // Create offspring 2
+        ArrayList<Building> offspringBuildings2 = new ArrayList<>(parent2.getBuildingsList().subList(0, crossoverPoint1));
+        offspringBuildings2.addAll(parent1.getBuildingsList().subList(crossoverPoint1, crossoverPoint2));
+        offspringBuildings2.addAll(parent2.getBuildingsList().subList(crossoverPoint2, parent2.getBuildingsList().size()));
 
-        // Copy genes up to the first crossover point
-        child1.append(parent1, 0, crossoverPoint1);
-        child2.append(parent2, 0, crossoverPoint1);
+        // Create gene objects for the offspring
+        Gene offspring1 = new Gene();
+        offspring1.setWidth(parent1.getWidth());
+        offspring1.setHeight(parent1.getHeight());
+        offspring1.setStartingMoney(parent1.getStartingMoney());
+        offspring1.setTravelCost(parent1.getTravelCost());
+        offspring1.setBuildingsList(offspringBuildings1);
 
-        // Copy genes between the two crossover points
-        child1.append(parent2, crossoverPoint1, crossoverPoint2);
-        child2.append(parent1, crossoverPoint1, crossoverPoint2);
+        Gene offspring2 = new Gene();
+        offspring2.setWidth(parent2.getWidth());
+        offspring2.setHeight(parent2.getHeight());
+        offspring2.setStartingMoney(parent2.getStartingMoney());
+        offspring2.setTravelCost(parent2.getTravelCost());
+        offspring2.setBuildingsList(offspringBuildings2);
 
-        // Copy remaining genes
-        child1.append(parent1, crossoverPoint2, parent1.length());
-        child2.append(parent2, crossoverPoint2, parent2.length());
+        // Create a list to store the offspring
+        ArrayList<Gene> offspringList = new ArrayList<>();
+        offspringList.add(offspring1);
+        offspringList.add(offspring2);
 
-        output.add(child1.toString());
-        output.add(child2.toString());
-
-        return output;
+        return offspringList;
     }
 
     /**
-     * Splits the gene into substrings based on building type.
+     * Selects a random crossover point in the gene's building list.
      *
-     * @param gene The gene representation of the city.
-     * @return ArrayList of substrings containing city and building information.
+     * @param parent1 The first parent gene.
+     * @param parent2 The second parent gene.
+     * @return The index of the crossover point.
      */
-    public static ArrayList<String> splitGene(String gene) {
-        ArrayList<String> substrings = new ArrayList<>();
+    private static int selectCrossoverPoint(Gene parent1, Gene parent2) {
+        int maxLength = Math.min(parent1.getBuildingsList().size(), parent2.getBuildingsList().size());
 
-        // Split the gene by spaces
-        String[] parts = gene.split(" ");
-
-        // Add the first substring with city information
-        StringBuilder cityInfo = new StringBuilder();
-        int index = 0;
-        while (index < parts.length && !parts[index].equals("SM")) {
-            cityInfo.append(parts[index]).append(" ");
-            index++;
-        }
-        substrings.add(cityInfo.toString().trim());
-
-        while (index < parts.length) {
-            StringBuilder buildingInfo = new StringBuilder();
-            buildingInfo.append(parts[index++]).append(" ");
-
-            if (parts[index - 1].equals("SM")) {
-                buildingInfo.append(parts[index++]).append(" ");
-            }
-            if (parts[index - 1].equals("TC")) {
-                buildingInfo.append(parts[index++]).append(" ");
-            }
-
-            if (parts[index - 1].equals("H")) {
-                buildingInfo.append(parts[index++]).append(" ");
-                buildingInfo.append(parts[index++]).append(" ");
-            }
-
-            if (parts[index - 1].equals("O")) {
-                buildingInfo.append(parts[index++]).append(" ");
-                buildingInfo.append(parts[index++]).append(" ");
-                buildingInfo.append(parts[index++]).append(" ");
-            }
-
-            if (parts[index - 1].equals("S")) {
-                buildingInfo.append(parts[index++]).append(" ");
-                buildingInfo.append(parts[index++]).append(" ");
-                buildingInfo.append(parts[index++]).append(" ");
-            }
-
-            substrings.add(buildingInfo.toString().trim());
+        // Ensure there is at least one element in the building lists
+        if (maxLength <= 0) {
+            throw new IllegalArgumentException("Both parent gene's building lists must have at least one element for crossover.");
         }
 
-        return substrings;
-    }
-
-    /**
-     * Chooses a crossover point for the gene representation.
-     *
-     * @param geneParts ArrayList of substrings containing city and building
-     * information.
-     * @return The index of the chosen crossover point.
-     */
-    public static int chooseCrossoverPoint(ArrayList<String> geneParts) {
-        // Ensure the index is within the bounds of the gene parts, skipping the first part
-        return Math.min(1 + random.nextInt(geneParts.size() - 1), geneParts.size());
-    }
-
-    /**
-     * Splits the gene into two parts at the given crossover point.
-     *
-     * @param geneParts ArrayList of substrings containing city and building
-     * information.
-     * @param crossoverPoint The index of the chosen crossover point.
-     * @return An array containing two strings representing the two parts of the
-     * gene.
-     */
-    public static String[] splitGeneAtCrossoverPoint(ArrayList<String> geneParts, int crossoverPoint) {
-        StringBuilder part1 = new StringBuilder();
-        StringBuilder part2 = new StringBuilder();
-
-        // Append the first part of the gene
-        for (int i = 0; i < crossoverPoint; i++) {
-            part1.append(geneParts.get(i)).append(" ");
-        }
-
-        // Append the second part of the gene
-        for (int i = crossoverPoint; i < geneParts.size(); i++) {
-            part2.append(geneParts.get(i)).append(" ");
-        }
-
-        // Trim any trailing spaces
-        String[] result = {part1.toString().trim(), part2.toString().trim()};
-        return result;
+        // Returns an integer that is smaller than the size of the smaller list to avoid errors
+        return random.nextInt(maxLength);
     }
 
     // Placeholder method for applying mutation to the offspring cities
@@ -505,177 +472,6 @@ public class GeneticAlgorithm {
     // Placeholder method for running the genetic algorithm
     public static void runGeneticAlgorithm(int populationSize, int generations, int cityWidth, int cityHeight) {
         // Implement the overall genetic algorithm process here
-    }
-
-    /**
-     * Resolves overlaps in a city gene by moving buildings to free spots with
-     * odd-numbered coordinates.
-     *
-     * @param geneParts The gene parts representing the city structure.
-     */
-    private static void resolveOverlaps(ArrayList<String> geneParts) {
-        // Skip the first 3 parts of the gene as they cannot have buildings
-        for (int i = 3; i < geneParts.size(); i++) {
-            String currentBuilding = geneParts.get(i);
-
-            // Split each individual building
-            String[] buildingInfo = currentBuilding.split(" ");
-
-            // Check if the split operation produced a non-empty array and has the expected length
-            if (buildingInfo.length >= 3) {
-                // Attempt to parse x and y coordinates
-                try {
-                    int x = Integer.parseInt(buildingInfo[1]);
-                    int y = Integer.parseInt(buildingInfo[2]);
-
-                    // Check if the coordinates are already occupied
-                    ArrayList<String> buildingsAtCoordinates = findBuildingsAtCoordinates(geneParts, i, x, y);
-
-                    if (!buildingsAtCoordinates.isEmpty()) {
-                        debug.write("Overlap detected at coordinates: " + x + " " + y);
-                        resolveOverlap(buildingsAtCoordinates, geneParts);
-                    }
-                } catch (NumberFormatException e) {
-                    // Handle the case where x or y is not a valid integer
-                    debug.write("Invalid coordinates in building: " + currentBuilding);
-                }
-            } else {
-                // Handle the case where buildingInfo does not have enough elements
-                debug.write("Invalid building format: " + currentBuilding);
-            }
-        }
-    }
-
-    /**
-     * Finds buildings at the specified coordinates, excluding the building at
-     * the given index.
-     *
-     * @param geneParts The gene parts representing the city structure.
-     * @param currentIndex The index of the current building to exclude.
-     * @param x The x-coordinate.
-     * @param y The y-coordinate.
-     * @return A list of buildings at the specified coordinates.
-     */
-    private static ArrayList<String> findBuildingsAtCoordinates(ArrayList<String> geneParts, int currentIndex, int x, int y) {
-        ArrayList<String> buildingsAtCoordinates = new ArrayList<>();
-
-        for (int j = 3; j < geneParts.size(); j++) {
-            if (j != currentIndex) {
-                String otherBuilding = geneParts.get(j);
-                String[] buildingInfo = otherBuilding.split(" ");
-
-                // Check if the split operation produced a non-empty array and has the expected length
-                if (buildingInfo.length >= 3) {
-                    int otherX = Integer.parseInt(buildingInfo[1]);
-                    int otherY = Integer.parseInt(buildingInfo[2]);
-
-                    if (x == otherX && y == otherY) {
-                        buildingsAtCoordinates.add(otherBuilding);
-                    }
-                }
-            }
-        }
-
-        return buildingsAtCoordinates;
-    }
-
-    /**
-     * Resolves overlap by moving buildings to free spots with odd-numbered
-     * coordinates.
-     *
-     * @param buildingsAtCoordinates The list of buildings at overlapping
-     * coordinates.
-     * @param geneParts The gene parts representing the city structure.
-     */
-    private static void resolveOverlap(ArrayList<String> buildingsAtCoordinates, ArrayList<String> geneParts) {
-        for (int i = 1; i < buildingsAtCoordinates.size(); i++) {
-            String overlappingBuilding = buildingsAtCoordinates.get(i);
-            debug.write("Moving building to resolve overlap: " + overlappingBuilding);
-
-            // Move the building to a free spot with an odd-numbered x and y coordinate
-            int newX = findFreeCoordinate(geneParts, Integer.parseInt(overlappingBuilding.split(" ")[1]), true);
-            int newY = findFreeCoordinate(geneParts, Integer.parseInt(overlappingBuilding.split(" ")[2]), false);
-
-            // Ensure newX and newY remain odd
-            newX = (newX % 2 == 0) ? newX + 1 : newX;
-            newY = (newY % 2 == 0) ? newY + 1 : newY;
-
-            String adjustedBuildingInfo = overlappingBuilding.replaceFirst("\\d+ \\d+", newX + " " + newY);
-            updateGeneParts(geneParts, overlappingBuilding, adjustedBuildingInfo);
-        }
-    }
-
-    /**
-     * Finds a free coordinate for a building, ensuring it remains odd. Uses the
-     * calculateX and caluclateY helper methods for readability.
-     *
-     * @param geneParts The gene parts representing the city structure.
-     * @param coordinate The initial coordinate to start searching.
-     * @param isX True if searching for a free x-coordinate, false for
-     * y-coordinate.
-     * @return The free coordinate.
-     */
-    private static int findFreeCoordinate(ArrayList<String> geneParts, int coordinate, boolean isX) {
-        int newCoordinate = coordinate;
-
-        int baseX = Integer.parseInt(geneParts.get(3).split(" ")[1]);
-        int baseY = Integer.parseInt(geneParts.get(3).split(" ")[2]);
-
-        while (isCoordinateOccupied(geneParts, calculateX(isX, newCoordinate, baseX), calculateY(isX, newCoordinate, baseY))) {
-            newCoordinate += 2; // Move to the next odd-numbered coordinate
-        }
-
-        return newCoordinate;
-    }
-
-    private static int calculateX(boolean isX, int newCoordinate, int baseX) {
-        if (isX) {
-            return newCoordinate;
-        } else {
-            return baseX;
-        }
-    }
-
-    private static int calculateY(boolean isX, int newCoordinate, int baseY) {
-        if (isX) {
-            return baseY;
-        } else {
-            return newCoordinate;
-        }
-    }
-
-    /**
-     * Checks if a coordinate is occupied by any building in the gene parts.
-     *
-     * @param geneParts The gene parts representing the city structure.
-     * @param x The x-coordinate.
-     * @param y The y-coordinate.
-     * @return True if the coordinate is occupied, false otherwise.
-     */
-    private static boolean isCoordinateOccupied(ArrayList<String> geneParts, int x, int y) {
-        return geneParts.stream()
-                .skip(3) // Skip the first 3 parts of the gene
-                .anyMatch(building -> {
-                    int buildingX = Integer.parseInt(building.split(" ")[1]);
-                    int buildingY = Integer.parseInt(building.split(" ")[2]);
-                    return buildingX == x && buildingY == y;
-                });
-    }
-
-    /**
-     * Updates the gene parts with the new building information.
-     *
-     * @param geneParts The gene parts representing the city structure.
-     * @param oldBuildingInfo The old information of the building.
-     * @param newBuildingInfo The new information of the building.
-     */
-    private static void updateGeneParts(ArrayList<String> geneParts, String oldBuildingInfo, String newBuildingInfo) {
-        for (int i = 3; i < geneParts.size(); i++) {
-            if (geneParts.get(i).equals(oldBuildingInfo)) {
-                geneParts.set(i, newBuildingInfo);
-                break;
-            }
-        }
     }
 
 }

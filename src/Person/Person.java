@@ -88,11 +88,11 @@ public class Person {
 
         money -= finalCost;
         this.setCurrentPosition(this.office.getPosition());
-        money += office.getAverageSalary();
+        money += office.getSalary();
         money = Math.floor(money * 100) / 100;
         debug.write("Person " + this.getName() + " is going to work.\nDistance from house to office: " + distance
                 + "\nTravel cost deducted from money: " + travelCost
-                + "\nMoney made at work: " + office.getAverageSalary()
+                + "\nMoney made at work: " + office.getSalary()
                 + "\nRemaining money: " + money);
     }
 

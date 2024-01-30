@@ -1,7 +1,7 @@
 package Test;
 
 import City.City;
-import static City.City.decode;
+import City.Gene;
 import GeneticAlgorithm.GeneticAlgorithm;
 import java.util.ArrayList;
 
@@ -35,43 +35,21 @@ public class CrossoverTest {
         city1.populate(startingMoney, travelCost);
         city2.populate(startingMoney, travelCost);
 
-        String gene1 = city1.encode();
-        String gene2 = city2.encode();
+        Gene gene1 = Gene.encode(city1);
+        Gene gene2 = Gene.encode(city2);
 
-        System.out.println(city1.toStringGridLayout());
+        System.out.println("Parent 1: \n" + city1.toStringGridLayout());
+        System.out.println("\nParent 2: \n" + city2.toStringGridLayout());
 
-        ArrayList<String> parts1 = GeneticAlgorithm.splitGene(gene1);
+        ArrayList<Gene> offspringGenes = GeneticAlgorithm.onePointCrossover(gene1, gene2);
 
-        System.out.println("\nGene Parts:");
-        for (int i = 0; i < parts1.size(); i++) {
-            System.out.println(parts1.get(i));
-        }
+        Gene offspring1 = offspringGenes.get(0);
+        Gene offspring2 = offspringGenes.get(1);
 
-        System.out.println(city2.toStringGridLayout());
+        City decodedOffspring1 = Gene.decode(offspring1);
+        City decodedOffspring2 = Gene.decode(offspring2);
 
-        ArrayList<String> parts2 = GeneticAlgorithm.splitGene(gene2);
-
-        System.out.println("\nGene Parts:");
-        for (int i = 0; i < parts2.size(); i++) {
-            System.out.println(parts2.get(i));
-        }
-
-        ArrayList<String> newGenes = ga.singlePointCrossover(gene1, gene2);
-        System.out.println("New Gene1 : \n" + newGenes.get(0));
-        System.out.println("");
-        System.out.println("New Gene2 : \n" + newGenes.get(1));
-
-        City decodedCity1 = new City(decode(newGenes.get(0)));
-        System.out.println(decodedCity1.toStringGridLayout());
-
-        ArrayList<String> parts3 = GeneticAlgorithm.splitGene(decodedCity1.getGene());
-        System.out.println("\nGene Parts:");
-        for (int i = 0; i < parts3.size(); i++) {
-            System.out.println(parts3.get(i));
-        }
-        City decodedCity2 = new City(decode(newGenes.get(1)));
-        System.out.println(decodedCity2.toStringGridLayout());
-
+        System.out.println("Offspring Gene1: \n" + decodedOffspring1.toStringGridLayout());
+        System.out.println("\nOffspring Gene2: \n" + decodedOffspring2.toStringGridLayout());
     }
-
 }

@@ -18,6 +18,7 @@ import javax.swing.JPanel;
  *
  * @author Ivaylo Kolev 2005549
  */
+// Stitched images must be in a 2d array to preserve coordinates, otherwise city comes out crooked, roads are mismatched.
 public class CityVisualization {
 
     private ArrayList<Image> buildingImages;
@@ -66,7 +67,7 @@ public class CityVisualization {
     private Image loadImage(String filename) {
         try {
             File imgFile = new File("src/img/" + filename);
-            return ImageIO.read(imgFile).getScaledInstance(16, 16, Image.SCALE_SMOOTH);
+            return ImageIO.read(imgFile).getScaledInstance(64, 64, Image.SCALE_SMOOTH);
         } catch (IOException e) {
             debug.write("Error loading image: " + filename);
             return null;

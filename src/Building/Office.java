@@ -9,7 +9,7 @@ import java.util.Random;
  */
 public class Office extends Building {
 
-    private double averageSalary;
+    private double salary;
     private double variation;
     private double variationFactor;
 
@@ -31,7 +31,7 @@ public class Office extends Building {
 
         double averageSalaryTemp = averageSalary + (averageSalary * variationFactor);
 
-        this.averageSalary = Math.floor(averageSalaryTemp * 100) / 100;
+        this.salary = Math.floor(averageSalaryTemp * 100) / 100;
     }
 
     /**
@@ -41,12 +41,12 @@ public class Office extends Building {
      */
     public Office(Office toBeCopiedOffice) {
         super(toBeCopiedOffice);
-        this.averageSalary = toBeCopiedOffice.averageSalary;
+        this.salary = toBeCopiedOffice.salary;
     }
 
     // Getters and Setters
-    public double getAverageSalary() {
-        return averageSalary;
+    public double getSalary() {
+        return salary;
     }
 
     public double getVariation() {
