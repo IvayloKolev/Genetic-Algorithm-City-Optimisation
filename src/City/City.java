@@ -353,6 +353,19 @@ public class City {
         return count;
     }
 
+    // Helper method to count active people
+    public int countActivePeople() {
+        int count = 0;
+        ArrayList<Person> peopleInCity = this.getPeople();
+        for (Person person : peopleInCity) {
+            if (person.getActive()) {
+                count++;
+            }
+        }
+        debug.write("Total inactive people in this City: " + count);
+        return count;
+    }
+
     /**
      * Helper method to find an available office for a person.
      *

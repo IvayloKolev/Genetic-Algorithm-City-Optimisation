@@ -2,6 +2,7 @@ package Test;
 
 import City.City;
 import City.Gene;
+import GeneticAlgorithm.Crossover;
 import GeneticAlgorithm.GeneticAlgorithm;
 import java.util.ArrayList;
 
@@ -15,12 +16,12 @@ public class CrossoverTest {
 
         GeneticAlgorithm ga = new GeneticAlgorithm();
 
-        int width = 25;
-        int height = 25;
-        int houses = 50;
-        int shops = 30;
+        int width = 69;
+        int height = 69;
+        int houses = 300;
+        int shops = 250;
         int shopAverageSpend = 30;
-        int offices = 30;
+        int offices = 200;
         int officeAverageSalary = 100;
         double variation = 0.1;
 
@@ -41,7 +42,7 @@ public class CrossoverTest {
         System.out.println("Parent 1: \n" + city1.toStringGridLayout());
         System.out.println("\nParent 2: \n" + city2.toStringGridLayout());
 
-        ArrayList<Gene> offspringGenes = GeneticAlgorithm.onePointCrossover(gene1, gene2);
+        ArrayList<Gene> offspringGenes = Crossover.uniformCrossover(gene1, gene2);
 
         Gene offspring1 = offspringGenes.get(0);
         Gene offspring2 = offspringGenes.get(1);

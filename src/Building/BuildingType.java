@@ -1,5 +1,7 @@
 package Building;
 
+import java.util.Random;
+
 /**
  * Enumeration representing different types of buildings in the city. Each
  * building type has an associated symbol used for display.
@@ -35,5 +37,16 @@ public enum BuildingType {
      */
     public char getSymbol() {
         return symbol;
+    }
+
+    /**
+     * Gets a random building type from the set {HOUSE, SHOP, OFFICE}.
+     *
+     * @return A random building type.
+     */
+    public static BuildingType getRandomBuildingType() {
+        Random random = new Random();
+        BuildingType[] buildingTypes = {HOUSE, SHOP, OFFICE};
+        return buildingTypes[random.nextInt(buildingTypes.length)];
     }
 }

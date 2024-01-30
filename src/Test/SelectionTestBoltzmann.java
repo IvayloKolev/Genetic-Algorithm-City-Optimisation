@@ -2,6 +2,7 @@ package Test;
 
 import City.City;
 import GeneticAlgorithm.GeneticAlgorithm;
+import GeneticAlgorithm.Selection;
 import java.util.ArrayList;
 
 /**
@@ -56,7 +57,7 @@ public class SelectionTestBoltzmann {
             System.out.println("Inactive People: " + sortedPopulation.get(i).countInactivePeople());
         }
 
-        City selectedCity = GeneticAlgorithm.boltzmannSelection(sortedPopulation, 10.0);
+        City selectedCity = Selection.boltzmannSelection(sortedPopulation, 10.0);
 
         // Display the selected city
         System.out.println("\nBoltzmann Selection Test:");

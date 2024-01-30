@@ -2,6 +2,7 @@ package Test;
 
 import City.City;
 import GeneticAlgorithm.GeneticAlgorithm;
+import GeneticAlgorithm.Selection;
 import GeneticAlgorithm.SelectionMethod;
 import java.util.ArrayList;
 
@@ -57,7 +58,7 @@ public class SelectParentsTest {
             System.out.println("Inactive People: " + sortedPopulation.get(i).countInactivePeople());
         }
 
-        ArrayList<City> parents = ga.selectParents(sortedPopulation, SelectionMethod.TOURNAMENT, 10);
+        ArrayList<City> parents = Selection.selectParents(sortedPopulation, SelectionMethod.TOURNAMENT, 10);
 
         for (int i = 0; i < parents.size(); i++) {
             System.out.println("\nSelected Parent City " + (i + 1) + "\n");

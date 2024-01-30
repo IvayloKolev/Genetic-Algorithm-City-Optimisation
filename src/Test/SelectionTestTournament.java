@@ -2,6 +2,7 @@ package Test;
 
 import City.City;
 import GeneticAlgorithm.GeneticAlgorithm;
+import GeneticAlgorithm.Selection;
 import java.util.ArrayList;
 
 /**
@@ -56,7 +57,7 @@ public class SelectionTestTournament {
             System.out.println("Inactive People: " + sortedPopulation.get(i).countInactivePeople());
         }
 
-        City selectedCity = GeneticAlgorithm.tournamentSelection(sortedPopulation, 10);
+        City selectedCity = Selection.tournamentSelection(sortedPopulation, 10);
 
         // Display the selected city
         System.out.println("\nTournament Selection Test:");

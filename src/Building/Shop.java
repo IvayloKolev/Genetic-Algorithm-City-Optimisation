@@ -1,7 +1,5 @@
 package Building;
 
-import java.util.Random;
-
 /**
  * Represents a shop building in the city simulation.
  *
@@ -22,14 +20,8 @@ public class Shop extends Building {
      */
     public Shop(int x, int y, double averageSpend, double variation) {
         super(BuildingType.SHOP, x, y);
-
-        // Generate a random value within [-variation, +variation]
-        Random random = new Random();
-        double variationFactor = -variation + (2 * variation * random.nextDouble());
-
-        double averageSpendTemp = averageSpend + (averageSpend * variationFactor);
-
-        this.averageSpend = Math.floor(averageSpendTemp * 100) / 100;
+        this.variation = variation;
+        this.averageSpend = calculateValueWithVariation(averageSpend, variation);
     }
 
     /**
@@ -42,8 +34,25 @@ public class Shop extends Building {
         this.averageSpend = toBeCopiedShop.averageSpend;
     }
 
+    public Shop(int x, int y) {
+        super(BuildingType.SHOP, x, y);
+    }
+
     // Getters and Setters
     public double getAverageSpend() {
         return averageSpend;
     }
+
+    public void setAverageSpend(double averageSpend) {
+        this.averageSpend = averageSpend;
+    }
+
+    public double getVariation() {
+        return variation;
+    }
+
+    public void setVariation(double variation) {
+        this.variation = variation;
+    }
+
 }

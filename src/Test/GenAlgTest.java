@@ -1,8 +1,8 @@
 package Test;
 
-import City.City;
+import GeneticAlgorithm.CrossoverMethod;
 import GeneticAlgorithm.GeneticAlgorithm;
-import java.util.ArrayList;
+import GeneticAlgorithm.SelectionMethod;
 
 /**
  *
@@ -12,24 +12,35 @@ public class GenAlgTest {
 
     public static void main(String[] args) {
 
-        int populationSize = 20;
-        int width = 35;
-        int height = 35;
-        int houses = 60;
-        int shops = 20;
-        double shopAverageSpend = 70;
-        int offices = 15;
+        int generations = 1000;
+        int simulationDays = 100;
+        SelectionMethod selectionMethod = SelectionMethod.LINEAR_RANKING;
+        double selectionPressure = 1;
+        CrossoverMethod crossoverMethod = CrossoverMethod.UNIFORM;
+        double mutationChance = 0.05;
+        int populationSize = 100;
+
+        int width = 69;
+        int height = 69;
+        int houses = 300;
+        int shops = 250;
+        int offices = 150;
+        double shopAverageSpend = 40;
         double officeAverageSalary = 100;
         double variation = 0.1;
-
+        double centerBias = 2.5;
         int startingMoney = 100;
-        double travelCost = 4.0;
+        double travelCost = 5.5;
 
-        double centerBias = 3.0;
+        GeneticAlgorithm ga = new GeneticAlgorithm();
 
-        GeneticAlgorithm geneticAlgorithm = new GeneticAlgorithm();
-
-        ArrayList<City> initialPopulation = geneticAlgorithm.initialPopulation(
+        ga.runGeneticAlgorithm(
+                generations,
+                simulationDays,
+                selectionMethod,
+                selectionPressure,
+                crossoverMethod,
+                mutationChance,
                 populationSize,
                 width,
                 height,
@@ -43,18 +54,6 @@ public class GenAlgTest {
                 startingMoney,
                 travelCost);
 
-        for (City city : initialPopulation) {
-            city.simulate();
-        }
-
-        ArrayList<City> sortedPopulation = GeneticAlgorithm.evaluateFitness(initialPopulation);
-
-        for (int i = 0; i < sortedPopulation.size(); i++) {
-            System.out.println("\nCity " + (i + 1) + "\n");
-            System.out.println("Fitness: " + sortedPopulation.get(i).getFitness());
-            System.out.println("Inactive People: " + sortedPopulation.get(i).countInactivePeople());
-            System.out.println(sortedPopulation.get(i).toStringGridLayout());
-        }
     }
 
 }

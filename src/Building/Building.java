@@ -1,5 +1,7 @@
 package Building;
 
+import java.util.Random;
+
 /**
  * Represents a building in the city.
  *
@@ -38,6 +40,34 @@ public class Building {
         }
     }
 
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;  // Both references point to the same object
+        }
+
+        if (obj == null || getClass() != obj.getClass()) {
+            return false;  // Different classes or obj is null
+        }
+
+        Building otherBuilding = (Building) obj;
+        return this.getPosition().equals(otherBuilding.getPosition());
+    }
+
+    /**
+     * Common method to calculate the value with variation.
+     *
+     * @param baseValue The base value (average spend or salary).
+     * @param variation The variation factor affecting the value.
+     * @return The calculated value with variation.
+     */
+    protected static double calculateValueWithVariation(double baseValue, double variation) {
+        Random random = new Random();
+        double variationFactor = -variation + (2 * variation * random.nextDouble());
+        double valueWithVariation = baseValue + (baseValue * variationFactor);
+        return Math.floor(valueWithVariation * 100) / 100;
+    }
+
     // Getters
     public BuildingType getType() {
         return type;
@@ -51,8 +81,15 @@ public class Building {
         return this.getPosition().getX();
     }
 
+    public void setX(int x) {
+        this.position.setX(x);
+    }
+
     public int getY() {
         return this.getPosition().getY();
     }
 
+    public void setY(int y) {
+        this.position.setY(y);
+    }
 }

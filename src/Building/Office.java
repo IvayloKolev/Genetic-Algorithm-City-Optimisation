@@ -1,7 +1,5 @@
 package Building;
 
-import java.util.Random;
-
 /**
  * Represents an office building in the city simulation.
  *
@@ -11,7 +9,6 @@ public class Office extends Building {
 
     private double salary;
     private double variation;
-    private double variationFactor;
 
     /**
      * Constructs a new Office.
@@ -23,15 +20,8 @@ public class Office extends Building {
      */
     public Office(int x, int y, double averageSalary, double variation) {
         super(BuildingType.OFFICE, x, y);
-
-        // Generate a random value within [-variation, +variation]
-        Random random = new Random();
-        this.variationFactor = -variation + (2 * variation * random.nextDouble());
         this.variation = variation;
-
-        double averageSalaryTemp = averageSalary + (averageSalary * variationFactor);
-
-        this.salary = Math.floor(averageSalaryTemp * 100) / 100;
+        this.salary = calculateValueWithVariation(averageSalary, variation);
     }
 
     /**
@@ -44,17 +34,25 @@ public class Office extends Building {
         this.salary = toBeCopiedOffice.salary;
     }
 
+    public Office(int x, int y) {
+        super(BuildingType.OFFICE, x, y);
+    }
+
     // Getters and Setters
     public double getSalary() {
         return salary;
+    }
+
+    public void setSalary(double salary) {
+        this.salary = salary;
     }
 
     public double getVariation() {
         return variation;
     }
 
-    public double getVariationFactor() {
-        return variationFactor;
+    public void setVariation(double variation) {
+        this.variation = variation;
     }
 
 }

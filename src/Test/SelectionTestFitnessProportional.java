@@ -2,6 +2,7 @@ package Test;
 
 import City.City;
 import GeneticAlgorithm.GeneticAlgorithm;
+import GeneticAlgorithm.Selection;
 import java.util.ArrayList;
 
 /**
@@ -56,7 +57,7 @@ public class SelectionTestFitnessProportional {
             System.out.println("Inactive People: " + sortedPopulation.get(i).countInactivePeople());
         }
 
-        City selectedCity = GeneticAlgorithm.fitnessProportionalSelection(sortedPopulation);
+        City selectedCity = Selection.fitnessProportionalSelection(sortedPopulation);
 
         // Display the selected city
         System.out.println("\nFitness Proportional Selection Test:");
