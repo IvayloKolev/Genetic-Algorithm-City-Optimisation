@@ -12,7 +12,7 @@ public class GenAlgTest {
 
     public static void main(String[] args) {
 
-        int generations = 1000;
+        int generations = 10;
         int simulationDays = 100;
         SelectionMethod selectionMethod = SelectionMethod.LINEAR_RANKING;
         double selectionPressure = 1;
