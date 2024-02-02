@@ -8,9 +8,9 @@ import java.util.ArrayList;
  * @author Ivaylo Kolev 2005549
  */
 public enum CrossoverMethod {
-    ONE_POINT("One Point"),
-    TWO_POINT("Two Point"),
-    UNIFORM("Uniform");
+    OnePoint("One Point"),
+    TwoPoint("Two Point"),
+    Uniform("Uniform");
 
     private final String displayName;
 

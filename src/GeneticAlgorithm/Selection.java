@@ -29,10 +29,10 @@ public class Selection {
         ArrayList<City> selectedParents;
 
         switch (selectionMethod) {
-            case FITNESS_PROPORTIONAL -> {
+            case FitnessProportional -> {
                 selectedParents = selectParentsUsingFitnessProportional(population, numberOfParents);
             }
-            case LINEAR_RANKING -> {
+            case LinearRanking -> {
                 if (parameters.length > 0 && parameters[0] instanceof Double) {
                     double selectionPressure = (Double) parameters[0];
                     selectedParents = selectParentsUsingLinearRanking(population, numberOfParents, selectionPressure);
@@ -40,7 +40,7 @@ public class Selection {
                     throw new IllegalArgumentException("Linear ranking selection requires a selection pressure parameter.");
                 }
             }
-            case TOURNAMENT -> {
+            case Tournament -> {
                 if (parameters.length > 0 && parameters[0] instanceof Integer) {
                     int tournamentSize = (Integer) parameters[0];
                     selectedParents = selectParentsUsingTournament(population, numberOfParents, tournamentSize);
@@ -48,7 +48,7 @@ public class Selection {
                     throw new IllegalArgumentException("Tournament selection requires a tournament size parameter.");
                 }
             }
-            case BOLTZMANN -> {
+            case Boltzmann -> {
                 if (parameters.length > 0 && parameters[0] instanceof Double) {
                     double temperature = (Double) parameters[0];
                     selectedParents = selectParentsUsingBoltzmann(population, numberOfParents, temperature);

@@ -8,10 +8,10 @@ import java.util.ArrayList;
  * @author Ivaylo Kolev 2005549
  */
 public enum SelectionMethod {
-    FITNESS_PROPORTIONAL("Fitness Proportional"),
-    LINEAR_RANKING("Linear Ranking"),
-    TOURNAMENT("Tournament"),
-    BOLTZMANN("Boltzmann");
+    FitnessProportional("Fitness Proportional"),
+    LinearRanking("Linear Ranking"),
+    Tournament("Tournament"),
+    Boltzmann("Boltzmann");
 
     private final String displayName;
 

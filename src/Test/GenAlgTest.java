@@ -14,9 +14,9 @@ public class GenAlgTest {
 
         int generations = 100;
         int simulationDays = 100;
-        SelectionMethod selectionMethod = SelectionMethod.BOLTZMANN;
+        SelectionMethod selectionMethod = SelectionMethod.Boltzmann;
         double selectionParameter = 2.5;
-        CrossoverMethod crossoverMethod = CrossoverMethod.TWO_POINT;
+        CrossoverMethod crossoverMethod = CrossoverMethod.TwoPoint;
         double mutationChance = 0.05;
         int populationSize = 100;
 

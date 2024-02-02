@@ -1,9 +1,12 @@
 package GUI;
 
+import Debug.Debug;
 import GeneticAlgorithm.CrossoverMethod;
+import GeneticAlgorithm.GeneticAlgorithm;
 import GeneticAlgorithm.SelectionMethod;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
+import java.util.Map;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
@@ -16,6 +19,8 @@ import javax.swing.JTextField;
 public class GeneticAlgorithmGUI extends javax.swing.JFrame {
 
     private static final long serialVersionUID = 1L;
+
+    Debug debug = new Debug();
 
     /**
      * Creates new form
@@ -246,6 +251,11 @@ public class GeneticAlgorithmGUI extends javax.swing.JFrame {
         crossoverMethodLabel.setText("Crossover Method:");
 
         crossoverMethodComboBox.setToolTipText("The method which will be used to combine parents into children for the next generation.");
+        crossoverMethodComboBox.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                crossoverMethodComboBoxActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout jPanel7Layout = new javax.swing.GroupLayout(jPanel7);
         jPanel7.setLayout(jPanel7Layout);
@@ -932,7 +942,7 @@ public class GeneticAlgorithmGUI extends javax.swing.JFrame {
     }//GEN-LAST:event_mutationChanceTextFieldActionPerformed
 
     private void selectionMethodComboBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_selectionMethodComboBoxActionPerformed
-        // TODO add your handling code here:
+        debug.write("Selected Selection Method: " + selectionMethodComboBox.getSelectedItem());
     }//GEN-LAST:event_selectionMethodComboBoxActionPerformed
 
     private void populationSizeTextFieldActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_populationSizeTextFieldActionPerformed
@@ -984,8 +994,73 @@ public class GeneticAlgorithmGUI extends javax.swing.JFrame {
     }//GEN-LAST:event_travelCostTextFieldActionPerformed
 
     private void runGAButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_runGAButtonActionPerformed
-        // TODO add your handling code here:
+        outputTextArea.setText(null);
+        try {
+            // Collect parameters from the GUI fields
+            int generations = Integer.parseInt(generationsTextField.getText());
+            int width = Integer.parseInt(widthTextField.getText());
+            int height = Integer.parseInt(heightTextField.getText());
+            int numHouses = Integer.parseInt(housesTextField.getText());
+            int numOffices = Integer.parseInt(officesTextField.getText());
+            int numShops = Integer.parseInt(shopsTextField.getText());
+            int populationSize = Integer.parseInt(populationSizeTextField.getText());
+            int simulationDays = Integer.parseInt(simulationDaysTextField.getText());
+
+            double centerBias = Double.parseDouble(centerBiasTextField.getText());
+            double mutationChance = Double.parseDouble(mutationChanceTextField.getText());
+            double officeSalary = Double.parseDouble(officeSalaryTextField.getText());
+            double selectionParameter = Double.parseDouble(selectionParameterTextField.getText());
+            double shopAverageSpend = Double.parseDouble(shopAverageSpendTextField.getText());
+            double startingMoney = Double.parseDouble(startingMoneyTextField.getText());
+            double travelCost = Double.parseDouble(travelCostTextField.getText());
+            double variation = Double.parseDouble(variationTextField.getText());
+
+            // Get selected items from combo boxes
+            SelectionMethod selectedSelectionMethod = SelectionMethod.valueOf((String) selectionMethodComboBox.getSelectedItem());
+            CrossoverMethod selectedCrossoverMethod = CrossoverMethod.valueOf((String) crossoverMethodComboBox.getSelectedItem());
+
+            // Create and run the GeneticAlgorithm
+            GeneticAlgorithm geneticAlgorithm = new GeneticAlgorithm();
+            Map<String, Object> genAlgOutput = geneticAlgorithm.runGeneticAlgorithm(generations,
+                    simulationDays,
+                    selectedSelectionMethod,
+                    selectionParameter,
+                    selectedCrossoverMethod,
+                    mutationChance,
+                    populationSize,
+                    width,
+                    height,
+                    numHouses,
+                    numShops,
+                    numOffices,
+                    shopAverageSpend,
+                    officeSalary,
+                    variation,
+                    centerBias,
+                    startingMoney,
+                    travelCost);
+
+            // Convert the map to a string for printing
+            StringBuilder outputText = new StringBuilder();
+            for (Map.Entry<String, Object> entry : genAlgOutput.entrySet()) {
+                outputText.append(entry.getKey()).append(": ").append(entry.getValue()).append("\n");
+            }
+
+            // Print the string to the outputTextArea
+            outputTextArea.setText(outputText.toString());
+        } catch (NumberFormatException e) {
+            // Handle parsing errors (invalid input in text fields)
+            outputTextArea.append("Invalid input. Please enter valid numeric values.\n");
+        } catch (Exception e) {
+            // Handle other exceptions if needed
+            outputTextArea.append("An error occurred: " + e.getMessage() + "\n");
+        }
+
     }//GEN-LAST:event_runGAButtonActionPerformed
+
+    private void crossoverMethodComboBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_crossoverMethodComboBoxActionPerformed
+        debug.write("Selected Crossover Method: " + crossoverMethodComboBox.getSelectedItem());
+    }//GEN-LAST:event_crossoverMethodComboBoxActionPerformed
 
     /**
      * @param args the command line arguments
