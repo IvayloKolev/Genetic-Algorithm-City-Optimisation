@@ -29,10 +29,10 @@ public class Selection {
         ArrayList<City> selectedParents;
 
         switch (selectionMethod) {
-            case FitnessProportional -> {
+            case Fitness_Proportional -> {
                 selectedParents = selectParentsUsingFitnessProportional(population, numberOfParents);
             }
-            case LinearRanking -> {
+            case Linear_Ranking -> {
                 if (parameters.length > 0 && parameters[0] instanceof Double) {
                     double selectionPressure = (Double) parameters[0];
                     selectedParents = selectParentsUsingLinearRanking(population, numberOfParents, selectionPressure);

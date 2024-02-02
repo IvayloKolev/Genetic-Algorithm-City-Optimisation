@@ -38,9 +38,9 @@ public class Crossover {
             }
             // Perform crossover
             switch (crossoverMethod) {
-                case OnePoint ->
+                case One_Point ->
                     offspring.addAll(onePointCrossover(parent1, parent2));
-                case TwoPoint ->
+                case Two_Point ->
                     offspring.addAll(twoPointCrossover(parent1, parent2));
                 case Uniform ->
                     offspring.addAll(uniformCrossover(parent1, parent2));

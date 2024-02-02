@@ -31,16 +31,14 @@
       <Group type="103" groupAlignment="0" attributes="0">
           <Group type="102" alignment="0" attributes="0">
               <EmptySpace max="-2" attributes="0"/>
-              <Group type="103" groupAlignment="0" max="-2" attributes="0">
-                  <Component id="jPanel22" max="32767" attributes="0"/>
-                  <Component id="runGAButton" max="32767" attributes="0"/>
-              </Group>
-              <EmptySpace type="unrelated" max="-2" attributes="0"/>
-              <Group type="103" groupAlignment="0" attributes="0">
+              <Group type="103" groupAlignment="1" max="-2" attributes="0">
+                  <Component id="runGAButton" alignment="0" max="32767" attributes="0"/>
+                  <Component id="jPanel22" alignment="0" max="32767" attributes="0"/>
                   <Component id="outputInfoPanel" max="32767" attributes="0"/>
-                  <Component id="outputPanel" max="32767" attributes="0"/>
               </Group>
               <EmptySpace max="-2" attributes="0"/>
+              <Component id="outputPanel" min="-2" max="-2" attributes="0"/>
+              <EmptySpace max="32767" attributes="0"/>
           </Group>
       </Group>
     </DimensionLayout>
@@ -49,15 +47,13 @@
           <Group type="102" alignment="0" attributes="0">
               <EmptySpace min="-2" max="-2" attributes="0"/>
               <Group type="103" groupAlignment="0" attributes="0">
+                  <Component id="outputPanel" max="32767" attributes="0"/>
                   <Group type="102" attributes="0">
                       <Component id="jPanel22" min="-2" max="-2" attributes="0"/>
                       <EmptySpace max="-2" attributes="0"/>
-                      <Component id="runGAButton" pref="335" max="32767" attributes="0"/>
-                  </Group>
-                  <Group type="102" attributes="0">
+                      <Component id="runGAButton" min="-2" max="-2" attributes="0"/>
+                      <EmptySpace max="-2" attributes="0"/>
                       <Component id="outputInfoPanel" max="32767" attributes="0"/>
-                      <EmptySpace type="unrelated" max="-2" attributes="0"/>
-                      <Component id="outputPanel" min="-2" max="-2" attributes="0"/>
                   </Group>
               </Group>
               <EmptySpace max="-2" attributes="0"/>
@@ -418,7 +414,7 @@
             </Component>
             <Component class="javax.swing.JTextField" name="simulationDaysTextField">
               <Properties>
-                <Property name="text" type="java.lang.String" value="10"/>
+                <Property name="text" type="java.lang.String" value="15"/>
                 <Property name="toolTipText" type="java.lang.String" value="How many days will be simulated before the fitness of a city is evaluated."/>
                 <Property name="minimumSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
                   <Dimension value="[64, 30]"/>
@@ -638,7 +634,7 @@
             </Component>
             <Component class="javax.swing.JTextField" name="generationsTextField">
               <Properties>
-                <Property name="text" type="java.lang.String" value="5"/>
+                <Property name="text" type="java.lang.String" value="10"/>
                 <Property name="toolTipText" type="java.lang.String" value="The number of generations that the Genetic Algorithm will go through."/>
                 <Property name="minimumSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
                   <Dimension value="[64, 30]"/>
@@ -745,7 +741,7 @@
             </Component>
             <Component class="javax.swing.JTextField" name="housesTextField">
               <Properties>
-                <Property name="text" type="java.lang.String" value="15"/>
+                <Property name="text" type="java.lang.String" value="35"/>
                 <Property name="toolTipText" type="java.lang.String" value="Number of houses that the cities in the initial generation will have."/>
                 <Property name="minimumSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
                   <Dimension value="[64, 30]"/>
@@ -953,7 +949,7 @@
             </Component>
             <Component class="javax.swing.JTextField" name="widthTextField">
               <Properties>
-                <Property name="text" type="java.lang.String" value="23"/>
+                <Property name="text" type="java.lang.String" value="25"/>
                 <Property name="toolTipText" type="java.lang.String" value="The city&apos;s width."/>
                 <Property name="minimumSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
                   <Dimension value="[64, 30]"/>
@@ -1007,7 +1003,7 @@
             </Component>
             <Component class="javax.swing.JTextField" name="shopsTextField">
               <Properties>
-                <Property name="text" type="java.lang.String" value="3"/>
+                <Property name="text" type="java.lang.String" value="25"/>
                 <Property name="toolTipText" type="java.lang.String" value="Number of shops that the cities in the initial generation will have."/>
                 <Property name="minimumSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
                   <Dimension value="[64, 30]"/>
@@ -1153,7 +1149,7 @@
           <Group type="103" groupAlignment="0" attributes="0">
               <Group type="102" alignment="0" attributes="0">
                   <EmptySpace max="-2" attributes="0"/>
-                  <Component id="jScrollPane2" pref="499" max="32767" attributes="0"/>
+                  <Component id="jScrollPane2" max="32767" attributes="0"/>
                   <EmptySpace max="-2" attributes="0"/>
               </Group>
           </Group>
@@ -1162,7 +1158,7 @@
           <Group type="103" groupAlignment="0" attributes="0">
               <Group type="102" alignment="0" attributes="0">
                   <EmptySpace max="-2" attributes="0"/>
-                  <Component id="jScrollPane2" max="32767" attributes="0"/>
+                  <Component id="jScrollPane2" pref="258" max="32767" attributes="0"/>
                   <EmptySpace max="-2" attributes="0"/>
               </Group>
           </Group>
@@ -1199,12 +1195,12 @@
       <Layout>
         <DimensionLayout dim="0">
           <Group type="103" groupAlignment="0" attributes="0">
-              <EmptySpace min="0" pref="0" max="32767" attributes="0"/>
+              <EmptySpace min="0" pref="777" max="32767" attributes="0"/>
           </Group>
         </DimensionLayout>
         <DimensionLayout dim="1">
           <Group type="103" groupAlignment="0" attributes="0">
-              <EmptySpace min="0" pref="515" max="32767" attributes="0"/>
+              <EmptySpace min="0" pref="0" max="32767" attributes="0"/>
           </Group>
         </DimensionLayout>
       </Layout>

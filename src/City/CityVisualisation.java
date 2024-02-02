@@ -1,6 +1,8 @@
 package City;
 
 import Debug.Debug;
+import java.awt.Dimension;
+import java.awt.FlowLayout;
 import java.awt.Graphics2D;
 import java.awt.Image;
 import java.awt.geom.AffineTransform;
@@ -52,28 +54,44 @@ public class CityVisualisation {
             return displayPanel;
         }
 
-        int panelWidth = gridLayout[0].length * 64;
-        int panelHeight = gridLayout.length * 64;
+        int rows = gridLayout.length;
+        int cols = gridLayout[0].length;
 
-        displayPanel.removeAll(); // Clear existing components
+        // Set layout manager to FlowLayout
+        displayPanel.setLayout(new FlowLayout(FlowLayout.LEFT, 0, 0));
 
-        for (int row = 0; row < gridLayout.length; row++) {
-            for (int col = 0; col < gridLayout[0].length; col++) {
+        int panelWidth = displayPanel.getWidth();
+        int panelHeight = displayPanel.getHeight();
+
+        int preferredImageWith = 0;
+        int preferredImageHeight = 0;
+
+        for (int row = 0; row < rows; row++) {
+            for (int col = 0; col < cols; col++) {
                 Image buildingImage = getResizedBuildingImage(city, row, col, panelWidth, panelHeight);
 
-                if (buildingImage != null) {
-                    ImageIcon icon = new ImageIcon(buildingImage);
-                    JLabel label = new JLabel(icon);
-                    displayPanel.add(label);
-                } else {
-                    // Add an empty label for cells without an image
-                    displayPanel.add(new JLabel());
-                }
+                ImageIcon icon = new ImageIcon(buildingImage);
+                JLabel label = new JLabel(icon);
+
+                // Calculate the preferred size to maintain the aspect ratio
+                preferredImageWith = panelWidth / cols;
+                preferredImageHeight = panelHeight / rows;
+
+                // Set the preferred size of the label
+                label.setPreferredSize(new Dimension(preferredImageWith, preferredImageHeight));
+
+                displayPanel.add(label);
             }
         }
 
-        displayPanel.setSize(panelWidth, panelHeight); // Set panel size
-        displayPanel.revalidate(); // Refresh layout
+        // Check if the city is not square and adjust panel size accordingly
+        if (rows != cols) {
+            int newPanelWidth = preferredImageWith * rows;
+            int newPanelHeight = preferredImageHeight * cols;
+
+            displayPanel.setPreferredSize(new Dimension(newPanelWidth, newPanelHeight));
+        }
+
         debug.write("Displayed the completed city in the JPanel.");
 
         return displayPanel;
@@ -85,26 +103,18 @@ public class CityVisualisation {
     private void loadBuildingImages() {
         File imgFolder = new File("src/img");
 
-        if (imgFolder.exists() && imgFolder.isDirectory()) {
-            File[] imgFiles = imgFolder.listFiles();
+        File[] imgFiles = imgFolder.listFiles();
 
-            if (imgFiles != null) {
-                for (File file : imgFiles) {
-                    if (file.isFile() && file.getName().endsWith(".png")) {
-                        try {
-                            Image image = ImageIO.read(file);
-                            buildingImages.add(image);
-                            debug.write("Loaded image: " + file.getName());
-                        } catch (IOException e) {
-                            debug.write("Error loading image: " + file.getName());
-                        }
-                    }
+        for (File file : imgFiles) {
+            if (file.isFile() && file.getName().endsWith(".png")) {
+                try {
+                    Image image = ImageIO.read(file);
+                    buildingImages.add(image);
+                    debug.write("Loaded image: " + file.getName());
+                } catch (IOException e) {
+                    debug.write("Error loading image: " + file.getName());
                 }
-            } else {
-                debug.write("No image files found in the 'img' folder.");
             }
-        } else {
-            debug.write("The 'img' folder does not exist or is not a directory.");
         }
     }
 
@@ -139,27 +149,23 @@ public class CityVisualisation {
     private static Image getResizedBuildingImage(City city, int row, int col, int panelWidth, int panelHeight) {
         Image originalImage = getBuildingImage(city, row, col);
 
-        if (originalImage != null) {
-            int imageWidth = originalImage.getWidth(null);
-            int imageHeight = originalImage.getHeight(null);
+        int imageWidth = originalImage.getWidth(null);
+        int imageHeight = originalImage.getHeight(null);
 
-            // Calculate the target size to fit a full row or column
-            int targetWidth = panelWidth / city.getGridLayout()[0].length;
-            int targetHeight = panelHeight / city.getGridLayout().length;
+        // Ensure that the target width and height are non-zero
+        int targetWidth = Math.max(1, panelWidth / city.getGridLayout()[0].length);
+        int targetHeight = Math.max(1, panelHeight / city.getGridLayout().length);
 
-            // Choose the smaller scaling factor to maintain the original aspect ratio
-            double widthScale = (double) targetWidth / imageWidth;
-            double heightScale = (double) targetHeight / imageHeight;
-            double scale = Math.min(widthScale, heightScale);
+        // Choose the smaller scaling factor to maintain the original aspect ratio
+        double widthScale = (double) targetWidth / imageWidth;
+        double heightScale = (double) targetHeight / imageHeight;
+        double scale = Math.min(widthScale, heightScale);
 
-            // Resize the image
-            int scaledWidth = (int) (imageWidth * scale);
-            int scaledHeight = (int) (imageHeight * scale);
+        // Resize the image
+        int scaledWidth = (int) (imageWidth * scale);
+        int scaledHeight = (int) (imageHeight * scale);
 
-            return originalImage.getScaledInstance(scaledWidth, scaledHeight, Image.SCALE_SMOOTH);
-        } else {
-            return null;
-        }
+        return originalImage.getScaledInstance(scaledWidth, scaledHeight, Image.SCALE_SMOOTH);
     }
 
     /**

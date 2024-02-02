@@ -8,8 +8,8 @@ import java.util.ArrayList;
  * @author Ivaylo Kolev 2005549
  */
 public enum CrossoverMethod {
-    OnePoint("One Point"),
-    TwoPoint("Two Point"),
+    One_Point("One_Point"),
+    Two_Point("Two_Point"),
     Uniform("Uniform");
 
     private final String displayName;
