@@ -1,7 +1,7 @@
 package Building;
 
 /**
- * Represents an office building in the city simulation.
+ * Represents an office in the city.
  *
  * @author Ivaylo Kolev 2005549
  */

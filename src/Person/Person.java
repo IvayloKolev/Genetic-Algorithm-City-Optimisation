@@ -1,9 +1,9 @@
 package Person;
 
-import Building.House;
-import Building.Position;
 import Building.Building;
+import Building.House;
 import Building.Office;
+import Building.Position;
 import Building.Shop;
 import City.City;
 import Debug.Debug;
@@ -285,6 +285,12 @@ public class Person {
 
     public void setActive(Boolean active) {
         this.active = active;
+    }
+
+    @Override
+    public String toString() {
+        return "    Name = " + name
+           + "\n    Money = " + money;
     }
 
 }

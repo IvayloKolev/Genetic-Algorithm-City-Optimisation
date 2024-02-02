@@ -1,13 +1,13 @@
 package City;
 
-import Debug.Debug;
-import Person.Person;
-import Building.BuildingType;
-import Building.Office;
 import Building.Building;
+import Building.BuildingType;
 import Building.House;
+import Building.Office;
 import Building.Road;
 import Building.Shop;
+import Debug.Debug;
+import Person.Person;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Random;
@@ -364,6 +364,23 @@ public class City {
         }
         debug.write("Total inactive people in this City: " + count);
         return count;
+    }
+
+    public Person findRichestPerson() {
+        if (people.isEmpty()) {
+            debug.write("No people in the city.");
+            return null;
+        }
+
+        Person richestPerson = people.get(0);
+
+        for (Person person : people) {
+            if (person.getMoney() > richestPerson.getMoney()) {
+                richestPerson = person;
+            }
+        }
+        
+        return richestPerson;
     }
 
     /**

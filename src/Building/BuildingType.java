@@ -3,8 +3,8 @@ package Building;
 import java.util.Random;
 
 /**
- * Enumeration representing different types of buildings in the city. Each
- * building type has an associated symbol used for display.
+ * Enum representing different types of buildings in the city. Each building
+ * type has an associated symbol used for display.
  *
  * @author Ivaylo Kolev 2005549
  */

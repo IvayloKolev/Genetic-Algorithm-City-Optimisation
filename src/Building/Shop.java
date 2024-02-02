@@ -1,7 +1,7 @@
 package Building;
 
 /**
- * Represents a shop building in the city simulation.
+ * Represents a shop in the city.
  *
  * @author Ivaylo Kolev 2005549
  */

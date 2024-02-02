@@ -1,15 +1,19 @@
 package GeneticAlgorithm;
 
-/**
- *
- * @author Ivaylo Kolev 2005549
- */
 import City.City;
 import City.Gene;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashMap;
+import java.util.Map;
 
+/**
+ * The GeneticAlgorithm class provides methods for initializing and running a
+ * genetic algorithm to evolve populations of City instances.
+ *
+ * @author Ivaylo Kolev 2005549
+ */
 public class GeneticAlgorithm {
 
     /**
@@ -104,7 +108,34 @@ public class GeneticAlgorithm {
         return fitness;
     }
 
-    public void runGeneticAlgorithm(
+    /**
+     * Runs the genetic algorithm according to the parameters.
+     *
+     * @param generations The number of generations to run the genetic
+     * algorithm.
+     * @param simulationDays The number of simulation days for each generation.
+     * @param selectionMethod The selection method used for parent selection.
+     * @param selectionMethodParameter The parameter for the selection method.
+     * @param crossoverMethod The crossover method used for generating
+     * offspring.
+     * @param mutationChance The chance of mutation for the offspring.
+     * @param populationSize The size of the population.
+     * @param width The width of each city.
+     * @param height The height of each city.
+     * @param numHouses The number of houses in each city.
+     * @param numShops The number of shops in each city.
+     * @param numOffices The number of offices in each city.
+     * @param shopAverageSpend The average spending in shops.
+     * @param officeAverageSalary The average salary in offices.
+     * @param variation The possible variation for shop spending and salaries.
+     * @param centerBias Bias factor for clumping buildings in the center of the
+     * city.
+     * @param startingMoney The starting money for each city.
+     * @param travelCost The travel cost for each city.
+     * @return A Map containing the best City instance and its details after the
+     * specified generations.
+     */
+    public Map<String, Object> runGeneticAlgorithm(
             int generations,
             int simulationDays,
             SelectionMethod selectionMethod,
@@ -186,12 +217,24 @@ public class GeneticAlgorithm {
 
         // After the specified number of generations, print the details of the best city
         City bestCity = population.get(0);
-        System.out.println("\nBest City After " + generations + " Generations:");
-        System.out.println("Fitness: " + bestCity.getFitness());
-        System.out.println("Total Money: " + bestCity.getTotalMoney());
-        System.out.println("Inactive People: " + bestCity.countInactivePeople());
-        System.out.println("Active People: " + bestCity.countActivePeople());
+        String bestCityOutput
+                = "\nBest City After " + generations + " Generations:"
+                + "\nFitness: " + bestCity.getFitness()
+                + "\nTotal Money: " + bestCity.getTotalMoney()
+                + "\nInactive People: " + bestCity.countInactivePeople()
+                + "\nActive People: " + bestCity.countActivePeople()
+                + "\nRichest Person: \n" + bestCity.findRichestPerson().toString();
+
+        System.out.println(bestCityOutput);
         System.out.println(bestCity.toStringGridLayout());
+
+        // Create a Map to return two different data types from 1 method
+        Map<String, Object> outputDetails = new HashMap<>();
+        outputDetails.put("bestCity", bestCity);
+        outputDetails.put("bestCityOutput", bestCityOutput);
+
+        return outputDetails;
+
     }
 
 }
