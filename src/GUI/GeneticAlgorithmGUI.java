@@ -1,5 +1,7 @@
 package GUI;
 
+import City.City;
+import City.CityVisualisation;
 import Debug.Debug;
 import GeneticAlgorithm.CrossoverMethod;
 import GeneticAlgorithm.GeneticAlgorithm;
@@ -8,7 +10,7 @@ import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.util.Map;
 import javax.swing.DefaultComboBoxModel;
-import javax.swing.JTextArea;
+import javax.swing.JPanel;
 import javax.swing.JTextField;
 
 /**
@@ -34,7 +36,6 @@ public class GeneticAlgorithmGUI extends javax.swing.JFrame {
         JTextField[] doubleTextFields = {centerBiasTextField, mutationChanceTextField, officeSalaryTextField, selectionParameterTextField, shopAverageSpendTextField, startingMoneyTextField, travelCostTextField, variationTextField};
         limitInputDouble(doubleTextFields);
 
-        JTextArea outputText = outputTextArea;
     }
 
     /**
@@ -173,7 +174,7 @@ public class GeneticAlgorithmGUI extends javax.swing.JFrame {
         outputInfoPanel = new javax.swing.JPanel();
         jScrollPane2 = new javax.swing.JScrollPane();
         outputTextArea = new javax.swing.JTextArea();
-        jTabbedPane1 = new javax.swing.JTabbedPane();
+        outputPanel = new javax.swing.JPanel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -181,6 +182,7 @@ public class GeneticAlgorithmGUI extends javax.swing.JFrame {
 
         mutationChanceLabel.setText("Mutation Chance:");
 
+        mutationChanceTextField.setText("0.01");
         mutationChanceTextField.setToolTipText("The chance for new cities to randomly mutate. Mutations include moving buildings, transforming buildings into different types, prices and salaries changing, starting money and travel cost changing. Best kept low, between 0.01 ~ 0.05.");
         mutationChanceTextField.setCursor(new java.awt.Cursor(java.awt.Cursor.TEXT_CURSOR));
         mutationChanceTextField.setMinimumSize(new java.awt.Dimension(64, 30));
@@ -218,6 +220,7 @@ public class GeneticAlgorithmGUI extends javax.swing.JFrame {
 
         centerBiasLabel.setText("Building Center Bias:");
 
+        centerBiasTextField.setText("2.1");
         centerBiasTextField.setToolTipText("Used for city generation for initial population of cities. It is a double value, and the higher it is, the more clumped together the buildings will be in the center (MAX 4.0)");
         centerBiasTextField.setMinimumSize(new java.awt.Dimension(64, 30));
         centerBiasTextField.setPreferredSize(new java.awt.Dimension(90, 30));
@@ -251,6 +254,8 @@ public class GeneticAlgorithmGUI extends javax.swing.JFrame {
         crossoverMethodLabel.setText("Crossover Method:");
 
         crossoverMethodComboBox.setToolTipText("The method which will be used to combine parents into children for the next generation.");
+        crossoverMethodComboBox.setMinimumSize(new java.awt.Dimension(72, 30));
+        crossoverMethodComboBox.setPreferredSize(new java.awt.Dimension(72, 30));
         crossoverMethodComboBox.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 crossoverMethodComboBoxActionPerformed(evt);
@@ -275,11 +280,12 @@ public class GeneticAlgorithmGUI extends javax.swing.JFrame {
                 .addGroup(jPanel7Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(crossoverMethodLabel)
                     .addComponent(crossoverMethodComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(9, Short.MAX_VALUE))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         heightLabel.setText("City Height:");
 
+        heightTextField.setText("25");
         heightTextField.setToolTipText("The city's height.");
         heightTextField.setMinimumSize(new java.awt.Dimension(64, 30));
         heightTextField.setPreferredSize(new java.awt.Dimension(90, 30));
@@ -315,6 +321,7 @@ public class GeneticAlgorithmGUI extends javax.swing.JFrame {
 
         simulationDaysLabel.setText("Simulation Days:");
 
+        simulationDaysTextField.setText("10");
         simulationDaysTextField.setToolTipText("How many days will be simulated before the fitness of a city is evaluated.");
         simulationDaysTextField.setMinimumSize(new java.awt.Dimension(64, 30));
         simulationDaysTextField.setPreferredSize(new java.awt.Dimension(90, 30));
@@ -339,7 +346,7 @@ public class GeneticAlgorithmGUI extends javax.swing.JFrame {
             jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel3Layout.createSequentialGroup()
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(simulationDaysTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(simulationDaysLabel)))
         );
@@ -349,6 +356,7 @@ public class GeneticAlgorithmGUI extends javax.swing.JFrame {
 
         populationSizeLabel.setText("Population Size:");
 
+        populationSizeTextField.setText("15");
         populationSizeTextField.setToolTipText("The number of cities in each generation.");
         populationSizeTextField.setMinimumSize(new java.awt.Dimension(64, 30));
         populationSizeTextField.setPreferredSize(new java.awt.Dimension(90, 30));
@@ -386,6 +394,7 @@ public class GeneticAlgorithmGUI extends javax.swing.JFrame {
 
         startingMoneyLabel.setText("Person Starting Money:");
 
+        startingMoneyTextField.setText("130");
         startingMoneyTextField.setToolTipText("The amount of money each person starts with.");
         startingMoneyTextField.setMinimumSize(new java.awt.Dimension(64, 30));
         startingMoneyTextField.setPreferredSize(new java.awt.Dimension(90, 30));
@@ -420,6 +429,7 @@ public class GeneticAlgorithmGUI extends javax.swing.JFrame {
 
         travelCostLabel.setText("Person Travel Cost:");
 
+        travelCostTextField.setText("9.2");
         travelCostTextField.setToolTipText("The cost for travelling one tile in a city.");
         travelCostTextField.setMinimumSize(new java.awt.Dimension(64, 30));
         travelCostTextField.setPreferredSize(new java.awt.Dimension(90, 30));
@@ -455,6 +465,7 @@ public class GeneticAlgorithmGUI extends javax.swing.JFrame {
 
         generationsLabel.setText("Generations:");
 
+        generationsTextField.setText("5");
         generationsTextField.setToolTipText("The number of generations that the Genetic Algorithm will go through.");
         generationsTextField.setMinimumSize(new java.awt.Dimension(64, 30));
         generationsTextField.setPreferredSize(new java.awt.Dimension(90, 30));
@@ -492,6 +503,7 @@ public class GeneticAlgorithmGUI extends javax.swing.JFrame {
 
         variationLabel.setText("Variation:");
 
+        variationTextField.setText("38");
         variationTextField.setToolTipText("The amount that the average spend in shops and salaries in offices can vary between each other. For example an office's salary can be 100, with variation 10 it can be set between 90 and 110.");
         variationTextField.setMinimumSize(new java.awt.Dimension(64, 30));
         variationTextField.setPreferredSize(new java.awt.Dimension(90, 30));
@@ -524,6 +536,7 @@ public class GeneticAlgorithmGUI extends javax.swing.JFrame {
 
         housesLabel.setText("Number of Houses:");
 
+        housesTextField.setText("15");
         housesTextField.setToolTipText("Number of houses that the cities in the initial generation will have.");
         housesTextField.setMinimumSize(new java.awt.Dimension(64, 30));
         housesTextField.setPreferredSize(new java.awt.Dimension(90, 30));
@@ -556,6 +569,7 @@ public class GeneticAlgorithmGUI extends javax.swing.JFrame {
 
         shopAverageSpendLabel.setText("Shop Average Spend:");
 
+        shopAverageSpendTextField.setText("46");
         shopAverageSpendTextField.setToolTipText("The average amount of money each person spends at a shop every day. Values can varry from shop to shop.");
         shopAverageSpendTextField.setMinimumSize(new java.awt.Dimension(64, 30));
         shopAverageSpendTextField.setPreferredSize(new java.awt.Dimension(90, 30));
@@ -588,6 +602,7 @@ public class GeneticAlgorithmGUI extends javax.swing.JFrame {
 
         selectionParameterLabel.setText("Selection Parameter:");
 
+        selectionParameterTextField.setText("2.2");
         selectionParameterTextField.setToolTipText("Some selection methods require an additional parameter:\n- Fitness Proportional does not require a parameter.\n- Linear Ranking requires the linear ranking parameter, which is an integer determining the selection probability based on the rank of individuals.\n- Tournament requires the tournament size parameter, which is an integer specifying how many individuals participate in each tournament, and the winner is selected from them.\n- Boltzmann requires the temperature parameter, which is a double influencing the selection probability by considering the Boltzmann distribution.");
         selectionParameterTextField.setMinimumSize(new java.awt.Dimension(64, 30));
         selectionParameterTextField.setPreferredSize(new java.awt.Dimension(90, 30));
@@ -612,7 +627,7 @@ public class GeneticAlgorithmGUI extends javax.swing.JFrame {
             jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel5Layout.createSequentialGroup()
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(selectionParameterTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(selectionParameterLabel)))
         );
@@ -623,6 +638,8 @@ public class GeneticAlgorithmGUI extends javax.swing.JFrame {
         selectionMethodLabel.setText("Selection Method:");
 
         selectionMethodComboBox.setToolTipText("The method which will be used to select parents for the next generation.");
+        selectionMethodComboBox.setMinimumSize(new java.awt.Dimension(72, 30));
+        selectionMethodComboBox.setPreferredSize(new java.awt.Dimension(72, 30));
         selectionMethodComboBox.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 selectionMethodComboBoxActionPerformed(evt);
@@ -645,13 +662,14 @@ public class GeneticAlgorithmGUI extends javax.swing.JFrame {
             .addGroup(jPanel4Layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(selectionMethodLabel)
-                    .addComponent(selectionMethodComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(selectionMethodComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(selectionMethodLabel))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         widthLabel.setText("City Width:");
 
+        widthTextField.setText("23");
         widthTextField.setToolTipText("The city's width.");
         widthTextField.setMinimumSize(new java.awt.Dimension(64, 30));
         widthTextField.setPreferredSize(new java.awt.Dimension(90, 30));
@@ -687,6 +705,7 @@ public class GeneticAlgorithmGUI extends javax.swing.JFrame {
 
         shopsLabel.setText("Number of Shops:");
 
+        shopsTextField.setText("3");
         shopsTextField.setToolTipText("Number of shops that the cities in the initial generation will have.");
         shopsTextField.setMinimumSize(new java.awt.Dimension(64, 30));
         shopsTextField.setPreferredSize(new java.awt.Dimension(90, 30));
@@ -719,6 +738,7 @@ public class GeneticAlgorithmGUI extends javax.swing.JFrame {
 
         officesLabel.setText("Number of Offices:");
 
+        officesTextField.setText("5");
         officesTextField.setToolTipText("Number of offices that the cities in the initial generation will have.");
         officesTextField.setMinimumSize(new java.awt.Dimension(64, 30));
         officesTextField.setPreferredSize(new java.awt.Dimension(90, 30));
@@ -751,6 +771,7 @@ public class GeneticAlgorithmGUI extends javax.swing.JFrame {
 
         officeSalarySpendLabel.setText("Office Salary:");
 
+        officeSalaryTextField.setText("143");
         officeSalaryTextField.setToolTipText("The average amount of money each person earns at their work every day. Values can varry from shop to shop.");
         officeSalaryTextField.setMinimumSize(new java.awt.Dimension(64, 30));
         officeSalaryTextField.setPreferredSize(new java.awt.Dimension(90, 30));
@@ -885,11 +906,22 @@ public class GeneticAlgorithmGUI extends javax.swing.JFrame {
             outputInfoPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(outputInfoPanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 226, Short.MAX_VALUE)
+                .addComponent(jScrollPane2)
                 .addContainerGap())
         );
 
-        jTabbedPane1.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED));
+        outputPanel.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED));
+
+        javax.swing.GroupLayout outputPanelLayout = new javax.swing.GroupLayout(outputPanel);
+        outputPanel.setLayout(outputPanelLayout);
+        outputPanelLayout.setHorizontalGroup(
+            outputPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 0, Short.MAX_VALUE)
+        );
+        outputPanelLayout.setVerticalGroup(
+            outputPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 515, Short.MAX_VALUE)
+        );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -903,7 +935,7 @@ public class GeneticAlgorithmGUI extends javax.swing.JFrame {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(outputInfoPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jTabbedPane1))
+                    .addComponent(outputPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
@@ -914,11 +946,11 @@ public class GeneticAlgorithmGUI extends javax.swing.JFrame {
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(jPanel22, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(runGAButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                        .addComponent(runGAButton, javax.swing.GroupLayout.DEFAULT_SIZE, 335, Short.MAX_VALUE))
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(outputInfoPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(jTabbedPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 515, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addComponent(outputPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addContainerGap())
         );
 
@@ -1040,14 +1072,22 @@ public class GeneticAlgorithmGUI extends javax.swing.JFrame {
                     startingMoney,
                     travelCost);
 
-            // Convert the map to a string for printing
-            StringBuilder outputText = new StringBuilder();
-            for (Map.Entry<String, Object> entry : genAlgOutput.entrySet()) {
-                outputText.append(entry.getKey()).append(": ").append(entry.getValue()).append("\n");
-            }
+            // Get the best city and visualize it
+            City bestCity = (City) genAlgOutput.get("bestCity");
+            JPanel outputImagePanel = new JPanel();
+            CityVisualisation.displayCity(bestCity, outputImagePanel);
 
-            // Print the string to the outputTextArea
-            outputTextArea.setText(outputText.toString());
+            // Print the result directly to the outputTextArea
+            Map.Entry<String, Object> resultEntry = genAlgOutput.entrySet().iterator().next();
+            String resultText = resultEntry.getKey() + ": " + resultEntry.getValue() + "\n";
+            outputTextArea.setText(resultText);
+
+            // Replace the old outputImagePanel with the new one
+            outputPanel.removeAll();
+            outputPanel.add(outputImagePanel);
+            outputPanel.revalidate();
+            outputPanel.repaint();
+
         } catch (NumberFormatException e) {
             // Handle parsing errors (invalid input in text fields)
             outputTextArea.append("Invalid input. Please enter valid numeric values.\n");
@@ -1129,7 +1169,6 @@ public class GeneticAlgorithmGUI extends javax.swing.JFrame {
     private javax.swing.JPanel jPanel9;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
-    private javax.swing.JTabbedPane jTabbedPane1;
     private javax.swing.JLabel mutationChanceLabel;
     private javax.swing.JTextField mutationChanceTextField;
     private javax.swing.JLabel officeSalarySpendLabel;
@@ -1137,6 +1176,7 @@ public class GeneticAlgorithmGUI extends javax.swing.JFrame {
     private javax.swing.JLabel officesLabel;
     private javax.swing.JTextField officesTextField;
     private javax.swing.JPanel outputInfoPanel;
+    private javax.swing.JPanel outputPanel;
     private javax.swing.JTextArea outputTextArea;
     private javax.swing.JLabel populationSizeLabel;
     private javax.swing.JTextField populationSizeTextField;
