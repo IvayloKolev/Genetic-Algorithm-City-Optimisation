@@ -285,7 +285,7 @@ public class GeneticAlgorithmGUI extends javax.swing.JFrame {
 
         heightLabel.setText("City Height:");
 
-        heightTextField.setText("25");
+        heightTextField.setText("8");
         heightTextField.setToolTipText("The city's height.");
         heightTextField.setMinimumSize(new java.awt.Dimension(64, 30));
         heightTextField.setPreferredSize(new java.awt.Dimension(90, 30));
@@ -669,7 +669,7 @@ public class GeneticAlgorithmGUI extends javax.swing.JFrame {
 
         widthLabel.setText("City Width:");
 
-        widthTextField.setText("25");
+        widthTextField.setText("8");
         widthTextField.setToolTipText("The city's width.");
         widthTextField.setMinimumSize(new java.awt.Dimension(64, 30));
         widthTextField.setPreferredSize(new java.awt.Dimension(90, 30));
@@ -705,7 +705,7 @@ public class GeneticAlgorithmGUI extends javax.swing.JFrame {
 
         shopsLabel.setText("Number of Shops:");
 
-        shopsTextField.setText("25");
+        shopsTextField.setText("15");
         shopsTextField.setToolTipText("Number of shops that the cities in the initial generation will have.");
         shopsTextField.setMinimumSize(new java.awt.Dimension(64, 30));
         shopsTextField.setPreferredSize(new java.awt.Dimension(90, 30));
@@ -738,7 +738,7 @@ public class GeneticAlgorithmGUI extends javax.swing.JFrame {
 
         officesLabel.setText("Number of Offices:");
 
-        officesTextField.setText("5");
+        officesTextField.setText("10");
         officesTextField.setToolTipText("Number of offices that the cities in the initial generation will have.");
         officesTextField.setMinimumSize(new java.awt.Dimension(64, 30));
         officesTextField.setPreferredSize(new java.awt.Dimension(90, 30));
@@ -1029,8 +1029,8 @@ public class GeneticAlgorithmGUI extends javax.swing.JFrame {
         try {
             // Collect parameters from the GUI fields
             int generations = Integer.parseInt(generationsTextField.getText());
-            int width = Integer.parseInt(widthTextField.getText());
-            int height = Integer.parseInt(heightTextField.getText());
+            int width = Integer.parseInt(widthTextField.getText()) * 2 + 1;
+            int height = Integer.parseInt(heightTextField.getText()) * 2 + 1;;
             // Force the city to be square
             if (width != height) {
                 outputTextArea.append("Width and height must be the same.\n");

@@ -290,7 +290,7 @@ public class Person {
     @Override
     public String toString() {
         return "    Name = " + name
-           + "\n    Money = " + money;
+                + "\n    Money = " + Math.round(money * 100.0) / 100.0;
     }
 
 }

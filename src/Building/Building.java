@@ -64,7 +64,7 @@ public class Building {
     protected static double calculateValueWithVariation(double baseValue, double variation) {
         Random random = new Random();
         double variationFactor = -variation + (2 * variation * random.nextDouble());
-        double valueWithVariation = baseValue + (baseValue * variationFactor);
+        double valueWithVariation = baseValue + (1 + variationFactor);
         return Math.floor(valueWithVariation * 100) / 100;
     }
 
@@ -91,5 +91,19 @@ public class Building {
 
     public void setY(int y) {
         this.position.setY(y);
+    }
+
+    public static void main(String[] args) {
+        // Sample values
+        double baseValue = 100.0;
+        double variation = 50.0;
+
+        // Sample execution
+        double result = calculateValueWithVariation(baseValue, variation);
+
+        // Display the result
+        System.out.println("Base Value: " + baseValue);
+        System.out.println("Variation: " + variation);
+        System.out.println("Result with Variation: " + result);
     }
 }
