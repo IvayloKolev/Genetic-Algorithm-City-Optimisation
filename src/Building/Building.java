@@ -77,7 +77,7 @@ public class Building {
         return position;
     }
 
-    public int getX() { 
+    public int getX() {
         return this.getPosition().getX();
     }
 
@@ -93,17 +93,4 @@ public class Building {
         this.position.setY(y);
     }
 
-    public static void main(String[] args) {
-        // Sample values
-        double baseValue = 100.0;
-        double variation = 50.0;
-
-        // Sample execution
-        double result = calculateValueWithVariation(baseValue, variation);
-
-        // Display the result
-        System.out.println("Base Value: " + baseValue);
-        System.out.println("Variation: " + variation);
-        System.out.println("Result with Variation: " + result);
-    }
 }
