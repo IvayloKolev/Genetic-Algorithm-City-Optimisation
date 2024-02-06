@@ -77,7 +77,7 @@ public class Building {
         return position;
     }
 
-    public int getX() {
+    public int getX() { 
         return this.getPosition().getX();
     }
 
