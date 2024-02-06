@@ -79,10 +79,7 @@ public class GeneticAlgorithm {
     public static ArrayList<City> evaluateFitness(ArrayList<City> population) {
         // Evaluate fitness for each city
         for (City city : population) {
-            double fitness = city.getTotalMoney() - (city.countInactivePeople() * 100);
-
-            // If fitness is negative, set it to 0
-            city.setFitness(Math.max(0, Math.floor(fitness * 100) / 100));
+            evaluateCityFitness(city);
         }
 
         // Sort the population based on fitness
@@ -97,7 +94,7 @@ public class GeneticAlgorithm {
      * @param city The city to evaluate.
      * @return The fitness value for the city.
      */
-    public double evaluateSingleCityFitness(City city) {
+    public static double evaluateCityFitness(City city) {
         double fitness = city.getTotalMoney() - (city.countInactivePeople() * 100);
 
         // If fitness is negative, set it to 0

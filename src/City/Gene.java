@@ -69,6 +69,9 @@ public class Gene {
 
         ArrayList<Building> buildings = gene.getBuildingsList();
 
+        boolean hasOffice = false;
+        boolean hasShop = false;
+
         for (Building building : buildings) {
             int x = building.getX();
             int y = building.getY();
@@ -81,10 +84,12 @@ public class Gene {
                 case OFFICE -> {
                     double salary = ((Office) building).getSalary();
                     city.addBuilding(new Office(x, y, salary, 0.0));
+                    hasOffice = true;
                 }
                 case SHOP -> {
                     double averageSpend = ((Shop) building).getAverageSpend();
                     city.addBuilding(new Shop(x, y, averageSpend, 0.0));
+                    hasShop = true;
                 }
                 default -> {
                     // Handle the case for Road
@@ -99,6 +104,12 @@ public class Gene {
         // Set Starting money and Travel Cost
         city.setStartingMoney(gene.getStartingMoney());
         city.setTravelCost(gene.getTravelCost());
+
+        // Check if at least one office and one shop are present
+        if (!hasOffice || !hasShop) {
+            // Discard the city if the condition is not met
+            return null;
+        }
 
         // Populate the city with people
         city.populate(city.getStartingMoney(), city.getTravelCost());

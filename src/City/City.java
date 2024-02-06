@@ -189,6 +189,7 @@ public class City {
                 // Check if the maximum number of houses, shops, and offices have been placed
                 if (housesPlaced >= numHouses && shopsPlaced >= numShops && officesPlaced >= numOffices) {
                     // If all limits are reached, break out of the loop
+                    debug.write("All buildings placed in this city, terminating loop early");
                     break;
                 }
 

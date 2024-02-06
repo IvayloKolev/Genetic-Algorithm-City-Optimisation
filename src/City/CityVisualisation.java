@@ -63,22 +63,18 @@ public class CityVisualisation {
         int panelWidth = displayPanel.getWidth();
         int panelHeight = displayPanel.getHeight();
 
-        int preferredImageWith = 0;
-        int preferredImageHeight = 0;
+        int preferredImageWidth = panelWidth / cols;
+        int preferredImageHeight = panelHeight / rows;
 
         for (int row = 0; row < rows; row++) {
             for (int col = 0; col < cols; col++) {
-                Image buildingImage = getResizedBuildingImage(city, row, col, panelWidth, panelHeight);
+                Image buildingImage = getResizedBuildingImage(city, row, col, preferredImageWidth, preferredImageHeight);
 
                 ImageIcon icon = new ImageIcon(buildingImage);
                 JLabel label = new JLabel(icon);
 
-                // Calculate the preferred size to maintain the aspect ratio
-                preferredImageWith = panelWidth / cols;
-                preferredImageHeight = panelHeight / rows;
-
                 // Set the preferred size of the label
-                label.setPreferredSize(new Dimension(preferredImageWith, preferredImageHeight));
+                label.setPreferredSize(new Dimension(preferredImageWidth, preferredImageHeight));
 
                 displayPanel.add(label);
             }
@@ -86,7 +82,7 @@ public class CityVisualisation {
 
         // Check if the city is not square and adjust panel size accordingly
         if (rows != cols) {
-            int newPanelWidth = preferredImageWith * rows;
+            int newPanelWidth = preferredImageWidth * rows;
             int newPanelHeight = preferredImageHeight * cols;
 
             displayPanel.setPreferredSize(new Dimension(newPanelWidth, newPanelHeight));
@@ -119,6 +115,35 @@ public class CityVisualisation {
     }
 
     /**
+     * Get the appropriately resized image for building or road.
+     *
+     * @param city The City object.
+     * @param row The row index of the cell.
+     * @param col The column index of the cell.
+     * @param targetWidth The desired width of the resized image.
+     * @param targetHeight The desired height of the resized image.
+     * @return The resized Image for the building or road section, or null if
+     * not found.
+     */
+    private static Image getResizedBuildingImage(City city, int row, int col, int targetWidth, int targetHeight) {
+        Image originalImage = getBuildingImage(city, row, col);
+
+        int imageWidth = originalImage.getWidth(null);
+        int imageHeight = originalImage.getHeight(null);
+
+        // Choose the smaller scaling factor to maintain the original aspect ratio
+        double widthScale = (double) targetWidth / imageWidth;
+        double heightScale = (double) targetHeight / imageHeight;
+        double scale = Math.min(widthScale, heightScale);
+
+        // Resize the image
+        int scaledWidth = (int) (imageWidth * scale);
+        int scaledHeight = (int) (imageHeight * scale);
+
+        return originalImage.getScaledInstance(scaledWidth, scaledHeight, Image.SCALE_SMOOTH);
+    }
+
+    /**
      * Load an image from the 'img' folder.
      *
      * @param filename The filename of the image to be loaded.
@@ -132,40 +157,6 @@ public class CityVisualisation {
             debug.write("Error loading image: " + filename);
             return null;
         }
-    }
-
-    /**
-     * Get the appropriate resized image for the building symbol or road section
-     * based on neighboring roads.
-     *
-     * @param city The City object.
-     * @param row The row index of the cell.
-     * @param col The column index of the cell.
-     * @param panelWidth The width of the panel.
-     * @param panelHeight The height of the panel.
-     * @return The resized Image for the building or road section, or null if
-     * not found.
-     */
-    private static Image getResizedBuildingImage(City city, int row, int col, int panelWidth, int panelHeight) {
-        Image originalImage = getBuildingImage(city, row, col);
-
-        int imageWidth = originalImage.getWidth(null);
-        int imageHeight = originalImage.getHeight(null);
-
-        // Ensure that the target width and height are non-zero
-        int targetWidth = Math.max(1, panelWidth / city.getGridLayout()[0].length);
-        int targetHeight = Math.max(1, panelHeight / city.getGridLayout().length);
-
-        // Choose the smaller scaling factor to maintain the original aspect ratio
-        double widthScale = (double) targetWidth / imageWidth;
-        double heightScale = (double) targetHeight / imageHeight;
-        double scale = Math.min(widthScale, heightScale);
-
-        // Resize the image
-        int scaledWidth = (int) (imageWidth * scale);
-        int scaledHeight = (int) (imageHeight * scale);
-
-        return originalImage.getScaledInstance(scaledWidth, scaledHeight, Image.SCALE_SMOOTH);
     }
 
     /**

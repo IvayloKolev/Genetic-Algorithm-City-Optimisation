@@ -64,7 +64,7 @@ public class Building {
     protected static double calculateValueWithVariation(double baseValue, double variation) {
         Random random = new Random();
         double variationFactor = -variation + (2 * variation * random.nextDouble());
-        double valueWithVariation = baseValue + (baseValue * variationFactor);
+        double valueWithVariation = baseValue + (1 + variationFactor);
         return Math.floor(valueWithVariation * 100) / 100;
     }
 

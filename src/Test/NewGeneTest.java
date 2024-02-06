@@ -34,7 +34,7 @@ public class NewGeneTest {
         
         Gene gene = Gene.encode(city);
         city.simulate();
-        ga.evaluateSingleCityFitness(city);
+        ga.evaluateCityFitness(city);
         
         City decodedCity = Gene.decode(gene);
         
