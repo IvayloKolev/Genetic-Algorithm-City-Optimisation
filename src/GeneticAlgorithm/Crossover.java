@@ -245,13 +245,18 @@ public class Crossover {
                 }
             }
         }
-
-        // Add a debug message if no conflicts were found
         if (!conflictsFound) {
             debug.write("No conflicts found in the gene.");
         }
     }
 
+    /**
+     * Resolves conflicts in building positions within a gene by moving
+     * buildings to new positions until conflicts are resolved.
+     *
+     * @param gene The gene containing the buildings.
+     * @param building The building for which conflicts need to be resolved.
+     */
     private static void resolveConflict(Gene gene, Building building) {
         int originalX = building.getX();
         int originalY = building.getY();
@@ -261,6 +266,7 @@ public class Crossover {
 
         while (hasConflict(gene, newX, newY)) {
             debug.write("Conflict resolution needed for building at (" + newX + ", " + newY + ")");
+
             // Randomly choose a direction (up, down, left, right)
             int direction = (int) (Math.random() * 4);
 
@@ -284,6 +290,15 @@ public class Crossover {
         }
     }
 
+    /**
+     * Checks if there is a building at the specified position within the gene.
+     *
+     * @param gene The gene containing the buildings.
+     * @param x The x-coordinate to check.
+     * @param y The y-coordinate to check.
+     * @return True if a building exists at the specified position, false
+     * otherwise.
+     */
     static boolean hasConflict(Gene gene, int x, int y) {
         // Check if there is already a building at the specified position
         for (Building building : gene.getBuildingsList()) {

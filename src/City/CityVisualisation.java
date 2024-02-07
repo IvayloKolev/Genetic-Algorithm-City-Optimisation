@@ -12,7 +12,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
-import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
@@ -99,7 +98,17 @@ public class CityVisualisation {
     private void loadBuildingImages() {
         File imgFolder = new File("src/img");
 
+        if (!imgFolder.exists() || !imgFolder.isDirectory()) {
+            debug.write("Error: 'img' folder not found.");
+            return;
+        }
+
         File[] imgFiles = imgFolder.listFiles();
+
+        if (imgFiles == null) {
+            debug.write("Error: No files found in 'img' folder.");
+            return;
+        }
 
         for (File file : imgFiles) {
             if (file.isFile() && file.getName().endsWith(".png")) {
@@ -108,7 +117,7 @@ public class CityVisualisation {
                     buildingImages.add(image);
                     debug.write("Loaded image: " + file.getName());
                 } catch (IOException e) {
-                    debug.write("Error loading image: " + file.getName());
+                    debug.write("Error loading image: " + file.getName() + " - " + e.getMessage());
                 }
             }
         }
@@ -141,48 +150,6 @@ public class CityVisualisation {
         int scaledHeight = (int) (imageHeight * scale);
 
         return originalImage.getScaledInstance(scaledWidth, scaledHeight, Image.SCALE_SMOOTH);
-    }
-
-    /**
-     * Load an image from the 'img' folder.
-     *
-     * @param filename The filename of the image to be loaded.
-     * @return The loaded Image object.
-     */
-    private static Image loadImage(String filename) {
-        try {
-            File imgFile = new File("src/img/" + filename);
-            return ImageIO.read(imgFile).getScaledInstance(64, 64, Image.SCALE_SMOOTH);
-        } catch (IOException e) {
-            debug.write("Error loading image: " + filename);
-            return null;
-        }
-    }
-
-    /**
-     * Display building images in a JFrame.
-     */
-    public void displayBuildingImages() {
-        if (buildingImages.isEmpty()) {
-            debug.write("No building images to display.");
-            return;
-        }
-
-        JFrame frame = new JFrame("City Visualization");
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.setSize(800, 600);
-
-        JPanel panel = new JPanel();
-
-        for (Image image : buildingImages) {
-            ImageIcon icon = new ImageIcon(image);
-            JLabel label = new JLabel(icon);
-            panel.add(label);
-        }
-
-        frame.add(panel);
-        frame.setVisible(true);
-        debug.write("Displayed building images in the JFrame.");
     }
 
     /**
@@ -253,31 +220,19 @@ public class CityVisualisation {
     }
 
     /**
-     * Count the number of road neighbors for a given cell.
+     * Load an image from the 'img' folder.
      *
-     * @param city The City object.
-     * @param row The row index of the cell.
-     * @param col The column index of the cell.
-     * @return The number of road neighbors.
+     * @param filename The filename of the image to be loaded.
+     * @return The loaded Image object.
      */
-    private static int countRoadNeighbors(City city, int row, int col) {
-        int count = 0;
-        char[][] gridLayout = city.getGridLayout();
-
-        if (row > 0 && gridLayout[row - 1][col] == '+') {
-            count++; // Neighbor to the top
+    private static Image loadImage(String filename) {
+        try {
+            File imgFile = new File("src/img/" + filename);
+            return ImageIO.read(imgFile);
+        } catch (IOException e) {
+            debug.write("Error loading image: " + filename);
+            return null;
         }
-        if (row < gridLayout.length - 1 && gridLayout[row + 1][col] == '+') {
-            count++; // Neighbor to the bottom
-        }
-        if (col > 0 && gridLayout[row][col - 1] == '+') {
-            count++; // Neighbor to the left
-        }
-        if (col < gridLayout[0].length - 1 && gridLayout[row][col + 1] == '+') {
-            count++; // Neighbor to the right
-        }
-
-        return count;
     }
 
     /**
@@ -362,6 +317,34 @@ public class CityVisualisation {
         } else {
             return null;
         }
+    }
+
+    /**
+     * Count the number of road neighbors for a given cell.
+     *
+     * @param city The City object.
+     * @param row The row index of the cell.
+     * @param col The column index of the cell.
+     * @return The number of road neighbors.
+     */
+    private static int countRoadNeighbors(City city, int row, int col) {
+        int count = 0;
+        char[][] gridLayout = city.getGridLayout();
+
+        if (row > 0 && gridLayout[row - 1][col] == '+') {
+            count++; // Neighbor to the top
+        }
+        if (row < gridLayout.length - 1 && gridLayout[row + 1][col] == '+') {
+            count++; // Neighbor to the bottom
+        }
+        if (col > 0 && gridLayout[row][col - 1] == '+') {
+            count++; // Neighbor to the left
+        }
+        if (col < gridLayout[0].length - 1 && gridLayout[row][col + 1] == '+') {
+            count++; // Neighbor to the right
+        }
+
+        return count;
     }
 
     /**

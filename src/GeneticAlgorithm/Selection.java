@@ -20,9 +20,18 @@ public class Selection {
      * Method for selecting cities as parents for reproduction.
      *
      * @param population The population of cities.
-     * @param selectionMethod The preferred selection method.
+     * @param selectionMethod The preferred selection method. Supported methods
+     * are: 
+     * - Fitness_Proportional 
+     * - Linear_Ranking 
+     * - Tournament 
+     * - Boltzmann
      * @param parameters Additional parameters required by the selection method.
+     * The required parameters vary based on the selection method.
      * @return An ArrayList of selected parents.
+     *
+     * @throws IllegalArgumentException If the selection method is invalid or if
+     * the required parameters are not provided.
      */
     public static ArrayList<City> selectParents(ArrayList<City> population, SelectionMethod selectionMethod, Object... parameters) {
         int numberOfParents = Math.max(2, (int) (0.1 * population.size()));
@@ -110,19 +119,25 @@ public class Selection {
      * @return The selected city.
      */
     public static City fitnessProportionalSelection(List<City> population) {
+        // Calculate the total fitness of the population
         double totalFitness = population.stream().mapToDouble(City::getFitness).sum();
+
+        // Generate a random value within the total fitness range
         double randomValue = random.nextDouble() * totalFitness;
 
         double cumulativeFitness = 0;
         for (City city : population) {
+            // Accumulate the cumulative fitness
             cumulativeFitness += city.getFitness();
+
+            // Check if the accumulated fitness exceeds the random value
             if (cumulativeFitness >= randomValue) {
                 debug.write("Selected by Fitness Proportional Selection: " + city);
                 return city;
             }
         }
 
-        // This should not happen under normal circumstances
+        // Fallback: This should not happen under normal circumstances
         City fallbackCity = population.get(random.nextInt(population.size()));
         debug.write("Fallback - Selected by Fitness Proportional Selection: " + fallbackCity);
         return fallbackCity;
@@ -132,15 +147,17 @@ public class Selection {
      * Tournament Selection.
      *
      * @param population The list of cities to select from.
-     * @param tournamentSize The size of the tournament.
+     * @param numberOfTournaments The number of tournaments held between genes.
      * @return The selected city.
      */
-    public static City tournamentSelection(List<City> population, int tournamentSize) {
+    public static City tournamentSelection(List<City> population, int numberOfTournaments) {
+        // Create a tournament by randomly selecting individuals
         List<City> tournament = new ArrayList<>();
-        for (int i = 0; i < tournamentSize; i++) {
+        for (int i = 0; i < numberOfTournaments; i++) {
             tournament.add(population.get(random.nextInt(population.size())));
         }
 
+        // Select the fittest individual from the tournament
         City selectedCity = tournament.stream().max(Comparator.comparingDouble(City::getFitness)).orElse(null);
         debug.write("Selected by Tournament Selection: " + selectedCity);
         return selectedCity;
@@ -154,23 +171,28 @@ public class Selection {
      * @return The selected city.
      */
     public static City boltzmannSelection(List<City> population, double temperature) {
+        // Calculate the total weight based on the Boltzmann formula
         double totalWeight = 0;
         for (City city : population) {
             totalWeight += Math.exp(city.getFitness() / temperature);
         }
 
+        // Generate a random value within the total weight range
         double randomValue = random.nextDouble() * totalWeight;
         double cumulativeWeight = 0;
 
         for (City city : population) {
+            // Accumulate the cumulative weight
             cumulativeWeight += Math.exp(city.getFitness() / temperature);
+
+            // Check if the accumulated weight exceeds the random value
             if (cumulativeWeight >= randomValue) {
                 debug.write("Selected by Boltzmann Selection: " + city);
                 return city;
             }
         }
 
-        // This should not happen under normal circumstances
+        // Fallback: This should not happen under normal circumstances
         City fallbackCity = population.get(random.nextInt(population.size()));
         debug.write("Fallback - Selected by Boltzmann Selection: " + fallbackCity);
         return fallbackCity;
@@ -188,12 +210,16 @@ public class Selection {
     public static City linearRankingSelection(List<City> population, double selectionPressure) {
         int populationSize = population.size();
 
+        // Calculate the total probability for linear ranking selection
         double totalProb = calculateTotalLinearRankingProbability(selectionPressure, populationSize);
         double randomValue = new Random().nextDouble() * totalProb;
         double cumulativeProb = 0;
 
         for (City city : population) {
+            // Accumulate the cumulative probability
             cumulativeProb += calculateLinearRankingProbability(population.indexOf(city) + 1, selectionPressure, populationSize);
+
+            // Check if the accumulated probability exceeds the random value
             if (cumulativeProb >= randomValue) {
                 debug.write("Selected by Linear Ranking Selection: " + city);
                 return city;

@@ -5,6 +5,7 @@ import Building.House;
 import Building.Office;
 import Building.Road;
 import Building.Shop;
+import Debug.Debug;
 import java.util.ArrayList;
 
 /**
@@ -14,6 +15,8 @@ import java.util.ArrayList;
  * @author Ivaylo Kolev (2005549)
  */
 public class Gene {
+
+    private static final Debug debug = new Debug();
 
     private int width;
     private int height;
@@ -58,7 +61,7 @@ public class Gene {
      *
      * @param gene The Gene object to be decoded.
      * @return The decoded City object representing the reconstructed city
-     * structure.
+     * structure, or null if decoding fails.
      */
     public static City decode(Gene gene) {
         City city = new City(gene.getWidth(), gene.getHeight());
@@ -76,11 +79,10 @@ public class Gene {
             int x = building.getX();
             int y = building.getY();
 
-            // Check building type
+            // Handle different building types
             switch (building.getType()) {
-                case HOUSE -> {
+                case HOUSE ->
                     city.addBuilding(new House(x, y));
-                }
                 case OFFICE -> {
                     double salary = ((Office) building).getSalary();
                     city.addBuilding(new Office(x, y, salary, 0.0));
@@ -91,10 +93,8 @@ public class Gene {
                     city.addBuilding(new Shop(x, y, averageSpend, 0.0));
                     hasShop = true;
                 }
-                default -> {
-                    // Handle the case for Road
+                default ->
                     city.addBuilding(new Road(x, y));
-                }
             }
 
             city.getGridLayout()[x][y] = building.getType().getSymbol();
@@ -108,6 +108,13 @@ public class Gene {
         // Check if at least one office and one shop are present
         if (!hasOffice || !hasShop) {
             // Discard the city if the condition is not met
+            if (!hasOffice) {
+                debug.write("Discarded a gene with no offices.");
+            } else if (!hasShop) {
+                debug.write("Descarded a gene with no shops");
+            } else if (!hasShop && !hasOffice) {
+                debug.write("Discarded a gene with no shops or offices, one in a million!");
+            }
             return null;
         }
 

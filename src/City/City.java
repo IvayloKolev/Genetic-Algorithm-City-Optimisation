@@ -341,7 +341,11 @@ public class City {
         return totalMoney;
     }
 
-    // Helper method to count inactive people
+    /**
+     * Counts the number of inactive people in the city.
+     *
+     * @return The count of inactive people.
+     */
     public int countInactivePeople() {
         int count = 0;
         ArrayList<Person> peopleInCity = this.getPeople();
@@ -354,7 +358,11 @@ public class City {
         return count;
     }
 
-    // Helper method to count active people
+    /**
+     * Counts the number of active people in the city.
+     *
+     * @return The count of active people.
+     */
     public int countActivePeople() {
         int count = 0;
         ArrayList<Person> peopleInCity = this.getPeople();
@@ -363,10 +371,15 @@ public class City {
                 count++;
             }
         }
-        debug.write("Total inactive people in this City: " + count);
+        debug.write("Total active people in this City: " + count);
         return count;
     }
 
+    /**
+     * Finds the richest person in the city.
+     *
+     * @return The richest person, or null if there are no people in the city.
+     */
     public Person findRichestPerson() {
         if (people.isEmpty()) {
             debug.write("No people in the city.");
@@ -380,7 +393,7 @@ public class City {
                 richestPerson = person;
             }
         }
-        
+
         return richestPerson;
     }
 
@@ -407,7 +420,6 @@ public class City {
         }
     }
 
-    // Getters and Setters
     // Getters and Setters
     public int getWidth() {
         return width;
