@@ -6,7 +6,12 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 
 /**
  * The GeneticAlgorithm class provides methods for initializing and running a
@@ -131,6 +136,7 @@ public class GeneticAlgorithm {
      * @param travelCost The travel cost for each city.
      * @return A Map containing the best City instance and its details after the
      * specified generations.
+     * @throws java.lang.InterruptedException
      */
     public Map<String, Object> runGeneticAlgorithm(
             int generations,
@@ -150,7 +156,7 @@ public class GeneticAlgorithm {
             double variation,
             double centerBias,
             double startingMoney,
-            double travelCost) {
+            double travelCost) throws InterruptedException {
 
         ArrayList<City> population = initialPopulation(
                 populationSize,
@@ -166,72 +172,92 @@ public class GeneticAlgorithm {
                 startingMoney,
                 travelCost);
 
-        for (int i = 0; i < simulationDays; i++) {
-            for (City city : population) {
-                city.simulate();
+        // Create a fixed thread pool with a number of threads equal to the available processors
+        ExecutorService executor = Executors.newFixedThreadPool(populationSize);
+
+        try {
+            for (int generation = 0; generation < generations; generation++) {
+
+                // Create a list to hold the tasks
+                List<Callable<Void>> tasks = new ArrayList<>();
+
+                // Submit simulation tasks for each city in parallel
+                for (City city : population) {
+                    tasks.add(() -> {
+                        for (int i = 0; i < simulationDays; i++) {
+                            city.simulate();
+                        }
+                        return null;
+                    });
+                }
+
+                // Invoke all tasks and wait for their completion
+                executor.invokeAll(tasks);
+
+                // Evaluate fitness for the current population
+                evaluateFitness(population);
+                // Sort the population by fitness
+                population.sort(Comparator.comparingDouble(City::getFitness).reversed());
+
+                // Print the best fitness in each generation
+                System.out.println("Generation " + (generation + 1) + ": Best Fitness - " + population.get(0).getFitness());
+
+                // Select parents for crossover
+                ArrayList<City> parents = Selection.selectParents(population, selectionMethod, selectionMethodParameter);
+                ArrayList<Gene> parentsGenes = new ArrayList<>();
+                for (City city : parents) {
+                    Gene gene = Gene.encode(city);
+                    parentsGenes.add(gene);
+                }
+
+                // Perform crossover to generate offspring
+                ArrayList<Gene> offspring = Crossover.crossover(parentsGenes, crossoverMethod, populationSize);
+
+                // Mutate the offspring
+                Mutation.mutate(offspring, mutationChance);
+
+                // Decode the offspring genes to create a new population of cities
+                ArrayList<City> newPopulation = new ArrayList<>();
+                for (Gene gene : offspring) {
+                    City city = Gene.decode(gene);
+                    newPopulation.add(city);
+                }
+
+                // Replace the old population with the new one
+                population = newPopulation;
+                // Sort the population by fitness
+                population.sort(Comparator.comparingDouble(City::getFitness).reversed());
+
             }
-        }
 
-        for (int generation = 0; generation < generations; generation++) {
-
-            // Evaluate fitness for the current population
             evaluateFitness(population);
-            // Sort the population by fitness
-            population.sort(Comparator.comparingDouble(City::getFitness).reversed());
 
-            // Print the best fitness in each generation
-            System.out.println("Generation " + (generation + 1) + ": Best Fitness - " + population.get(0).getFitness());
+            // After the specified number of generations, print the details of the best city
+            City bestCity = population.get(0);
+            String bestCityOutput
+                    = "\nBest City After " + generations + " Generations:"
+                    + "\nFitness: " + bestCity.getFitness()
+                    + "\nTotal Money: " + bestCity.getTotalMoney()
+                    + "\nInactive People: " + bestCity.countInactivePeople()
+                    + "\nActive People: " + bestCity.countActivePeople()
+                    + "\nRichest Person: \n" + bestCity.findRichestPerson().toString();
 
-            // Select parents for crossover
-            ArrayList<City> parents = Selection.selectParents(population, selectionMethod, selectionMethodParameter);
-            ArrayList<Gene> parentsGenes = new ArrayList<>();
-            for (City city : parents) {
-                Gene gene = Gene.encode(city);
-                parentsGenes.add(gene);
-            }
+            System.out.println(bestCityOutput);
+            System.out.println(bestCity.toStringGridLayout());
 
-            // Perform crossover to generate offspring
-            ArrayList<Gene> offspring = Crossover.crossover(parentsGenes, crossoverMethod, populationSize);
+            // Create a Map to return two different data types from 1 method
+            Map<String, Object> outputDetails = new HashMap<>();
+            outputDetails.put("bestCity", bestCity);
+            outputDetails.put("bestCityOutput", bestCityOutput);
 
-            // Mutate the offspring
-            Mutation.mutate(offspring, mutationChance);
+            return outputDetails;
 
-            // Decode the offspring genes to create a new population of cities
-            ArrayList<City> newPopulation = new ArrayList<>();
-            for (Gene gene : offspring) {
-                City city = Gene.decode(gene);
-                newPopulation.add(city);
-            }
+        } finally {
 
-            // Replace the old population with the new one
-            population = newPopulation;
-            // Sort the population by fitness
-            population.sort(Comparator.comparingDouble(City::getFitness).reversed());
-
+            // Shut down the executor and wait for all threads to finish
+            executor.shutdown();
+            executor.awaitTermination(Long.MAX_VALUE, TimeUnit.NANOSECONDS);
         }
-
-        evaluateFitness(population);
-
-        // After the specified number of generations, print the details of the best city
-        City bestCity = population.get(0);
-        String bestCityOutput
-                = "\nBest City After " + generations + " Generations:"
-                + "\nFitness: " + bestCity.getFitness()
-                + "\nTotal Money: " + bestCity.getTotalMoney()
-                + "\nInactive People: " + bestCity.countInactivePeople()
-                + "\nActive People: " + bestCity.countActivePeople()
-                + "\nRichest Person: \n" + bestCity.findRichestPerson().toString();
-
-        System.out.println(bestCityOutput);
-        System.out.println(bestCity.toStringGridLayout());
-
-        // Create a Map to return two different data types from 1 method
-        Map<String, Object> outputDetails = new HashMap<>();
-        outputDetails.put("bestCity", bestCity);
-        outputDetails.put("bestCityOutput", bestCityOutput);
-
-        return outputDetails;
 
     }
-
 }
