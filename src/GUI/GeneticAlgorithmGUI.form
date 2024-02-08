@@ -259,7 +259,7 @@
             </Component>
             <Component class="javax.swing.JTextField" name="centerBiasTextField">
               <Properties>
-                <Property name="text" type="java.lang.String" value="2.1"/>
+                <Property name="text" type="java.lang.String" value="2.5"/>
                 <Property name="toolTipText" type="java.lang.String" value="Used for city generation for initial population of cities. It is a double value, and the higher it is, the more clumped together the buildings will be in the center (MAX 4.0)"/>
                 <Property name="minimumSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
                   <Dimension value="[64, 30]"/>
@@ -364,7 +364,7 @@
             </Component>
             <Component class="javax.swing.JTextField" name="heightTextField">
               <Properties>
-                <Property name="text" type="java.lang.String" value="8"/>
+                <Property name="text" type="java.lang.String" value="15"/>
                 <Property name="toolTipText" type="java.lang.String" value="The city&apos;s height."/>
                 <Property name="minimumSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
                   <Dimension value="[64, 30]"/>
@@ -417,7 +417,7 @@
             </Component>
             <Component class="javax.swing.JTextField" name="simulationDaysTextField">
               <Properties>
-                <Property name="text" type="java.lang.String" value="15"/>
+                <Property name="text" type="java.lang.String" value="20"/>
                 <Property name="toolTipText" type="java.lang.String" value="How many days will be simulated before the fitness of a city is evaluated."/>
                 <Property name="minimumSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
                   <Dimension value="[64, 30]"/>
@@ -471,7 +471,7 @@
             </Component>
             <Component class="javax.swing.JTextField" name="populationSizeTextField">
               <Properties>
-                <Property name="text" type="java.lang.String" value="15"/>
+                <Property name="text" type="java.lang.String" value="20"/>
                 <Property name="toolTipText" type="java.lang.String" value="The number of cities in each generation."/>
                 <Property name="minimumSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
                   <Dimension value="[64, 30]"/>
@@ -581,7 +581,7 @@
             </Component>
             <Component class="javax.swing.JTextField" name="travelCostTextField">
               <Properties>
-                <Property name="text" type="java.lang.String" value="9.2"/>
+                <Property name="text" type="java.lang.String" value="1"/>
                 <Property name="toolTipText" type="java.lang.String" value="The cost for travelling one tile in a city."/>
                 <Property name="minimumSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
                   <Dimension value="[64, 30]"/>
@@ -637,7 +637,7 @@
             </Component>
             <Component class="javax.swing.JTextField" name="generationsTextField">
               <Properties>
-                <Property name="text" type="java.lang.String" value="10"/>
+                <Property name="text" type="java.lang.String" value="20"/>
                 <Property name="toolTipText" type="java.lang.String" value="The number of generations that the Genetic Algorithm will go through."/>
                 <Property name="minimumSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
                   <Dimension value="[64, 30]"/>
@@ -694,7 +694,7 @@
             </Component>
             <Component class="javax.swing.JTextField" name="variationTextField">
               <Properties>
-                <Property name="text" type="java.lang.String" value="38"/>
+                <Property name="text" type="java.lang.String" value="30"/>
                 <Property name="toolTipText" type="java.lang.String" value="The amount that the average spend in shops and salaries in offices can vary between each other. For example an office&apos;s salary can be 100, with variation 10 it can be set between 90 and 110."/>
                 <Property name="minimumSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
                   <Dimension value="[64, 30]"/>
@@ -744,7 +744,7 @@
             </Component>
             <Component class="javax.swing.JTextField" name="housesTextField">
               <Properties>
-                <Property name="text" type="java.lang.String" value="35"/>
+                <Property name="text" type="java.lang.String" value="150"/>
                 <Property name="toolTipText" type="java.lang.String" value="Number of houses that the cities in the initial generation will have."/>
                 <Property name="minimumSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
                   <Dimension value="[64, 30]"/>
@@ -794,7 +794,7 @@
             </Component>
             <Component class="javax.swing.JTextField" name="shopAverageSpendTextField">
               <Properties>
-                <Property name="text" type="java.lang.String" value="46"/>
+                <Property name="text" type="java.lang.String" value="40"/>
                 <Property name="toolTipText" type="java.lang.String" value="The average amount of money each person spends at a shop every day. Values can varry from shop to shop."/>
                 <Property name="minimumSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
                   <Dimension value="[64, 30]"/>
@@ -843,7 +843,7 @@
             </Component>
             <Component class="javax.swing.JTextField" name="selectionParameterTextField">
               <Properties>
-                <Property name="text" type="java.lang.String" value="2.2"/>
+                <Property name="text" type="java.lang.String" value="2.5"/>
                 <Property name="toolTipText" type="java.lang.String" value="Some selection methods require an additional parameter:&#xa;- Fitness Proportional does not require a parameter.&#xa;- Linear Ranking requires the linear ranking parameter, which is an integer determining the selection probability based on the rank of individuals.&#xa;- Tournament requires the tournament size parameter, which is an integer specifying how many individuals participate in each tournament, and the winner is selected from them.&#xa;- Boltzmann requires the temperature parameter, which is a double influencing the selection probability by considering the Boltzmann distribution."/>
                 <Property name="minimumSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
                   <Dimension value="[64, 30]"/>
@@ -952,7 +952,7 @@
             </Component>
             <Component class="javax.swing.JTextField" name="widthTextField">
               <Properties>
-                <Property name="text" type="java.lang.String" value="8"/>
+                <Property name="text" type="java.lang.String" value="15"/>
                 <Property name="toolTipText" type="java.lang.String" value="The city&apos;s width."/>
                 <Property name="minimumSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
                   <Dimension value="[64, 30]"/>
@@ -1006,7 +1006,7 @@
             </Component>
             <Component class="javax.swing.JTextField" name="shopsTextField">
               <Properties>
-                <Property name="text" type="java.lang.String" value="15"/>
+                <Property name="text" type="java.lang.String" value="25"/>
                 <Property name="toolTipText" type="java.lang.String" value="Number of shops that the cities in the initial generation will have."/>
                 <Property name="minimumSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
                   <Dimension value="[64, 30]"/>
@@ -1056,7 +1056,7 @@
             </Component>
             <Component class="javax.swing.JTextField" name="officesTextField">
               <Properties>
-                <Property name="text" type="java.lang.String" value="10"/>
+                <Property name="text" type="java.lang.String" value="25"/>
                 <Property name="toolTipText" type="java.lang.String" value="Number of offices that the cities in the initial generation will have."/>
                 <Property name="minimumSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
                   <Dimension value="[64, 30]"/>
@@ -1106,7 +1106,7 @@
             </Component>
             <Component class="javax.swing.JTextField" name="officeSalaryTextField">
               <Properties>
-                <Property name="text" type="java.lang.String" value="143"/>
+                <Property name="text" type="java.lang.String" value="160"/>
                 <Property name="toolTipText" type="java.lang.String" value="The average amount of money each person earns at their work every day. Values can varry from shop to shop."/>
                 <Property name="minimumSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
                   <Dimension value="[64, 30]"/>

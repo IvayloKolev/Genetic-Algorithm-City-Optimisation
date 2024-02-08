@@ -220,7 +220,7 @@ public class GeneticAlgorithmGUI extends javax.swing.JFrame {
 
         centerBiasLabel.setText("Building Center Bias:");
 
-        centerBiasTextField.setText("2.1");
+        centerBiasTextField.setText("2.5");
         centerBiasTextField.setToolTipText("Used for city generation for initial population of cities. It is a double value, and the higher it is, the more clumped together the buildings will be in the center (MAX 4.0)");
         centerBiasTextField.setMinimumSize(new java.awt.Dimension(64, 30));
         centerBiasTextField.setPreferredSize(new java.awt.Dimension(90, 30));
@@ -285,7 +285,7 @@ public class GeneticAlgorithmGUI extends javax.swing.JFrame {
 
         heightLabel.setText("City Height:");
 
-        heightTextField.setText("8");
+        heightTextField.setText("15");
         heightTextField.setToolTipText("The city's height.");
         heightTextField.setMinimumSize(new java.awt.Dimension(64, 30));
         heightTextField.setPreferredSize(new java.awt.Dimension(90, 30));
@@ -321,7 +321,7 @@ public class GeneticAlgorithmGUI extends javax.swing.JFrame {
 
         simulationDaysLabel.setText("Simulation Days:");
 
-        simulationDaysTextField.setText("15");
+        simulationDaysTextField.setText("20");
         simulationDaysTextField.setToolTipText("How many days will be simulated before the fitness of a city is evaluated.");
         simulationDaysTextField.setMinimumSize(new java.awt.Dimension(64, 30));
         simulationDaysTextField.setPreferredSize(new java.awt.Dimension(90, 30));
@@ -356,7 +356,7 @@ public class GeneticAlgorithmGUI extends javax.swing.JFrame {
 
         populationSizeLabel.setText("Population Size:");
 
-        populationSizeTextField.setText("15");
+        populationSizeTextField.setText("20");
         populationSizeTextField.setToolTipText("The number of cities in each generation.");
         populationSizeTextField.setMinimumSize(new java.awt.Dimension(64, 30));
         populationSizeTextField.setPreferredSize(new java.awt.Dimension(90, 30));
@@ -429,7 +429,7 @@ public class GeneticAlgorithmGUI extends javax.swing.JFrame {
 
         travelCostLabel.setText("Person Travel Cost:");
 
-        travelCostTextField.setText("9.2");
+        travelCostTextField.setText("1");
         travelCostTextField.setToolTipText("The cost for travelling one tile in a city.");
         travelCostTextField.setMinimumSize(new java.awt.Dimension(64, 30));
         travelCostTextField.setPreferredSize(new java.awt.Dimension(90, 30));
@@ -465,7 +465,7 @@ public class GeneticAlgorithmGUI extends javax.swing.JFrame {
 
         generationsLabel.setText("Generations:");
 
-        generationsTextField.setText("10");
+        generationsTextField.setText("20");
         generationsTextField.setToolTipText("The number of generations that the Genetic Algorithm will go through.");
         generationsTextField.setMinimumSize(new java.awt.Dimension(64, 30));
         generationsTextField.setPreferredSize(new java.awt.Dimension(90, 30));
@@ -503,7 +503,7 @@ public class GeneticAlgorithmGUI extends javax.swing.JFrame {
 
         variationLabel.setText("Variation:");
 
-        variationTextField.setText("38");
+        variationTextField.setText("30");
         variationTextField.setToolTipText("The amount that the average spend in shops and salaries in offices can vary between each other. For example an office's salary can be 100, with variation 10 it can be set between 90 and 110.");
         variationTextField.setMinimumSize(new java.awt.Dimension(64, 30));
         variationTextField.setPreferredSize(new java.awt.Dimension(90, 30));
@@ -536,7 +536,7 @@ public class GeneticAlgorithmGUI extends javax.swing.JFrame {
 
         housesLabel.setText("Number of Houses:");
 
-        housesTextField.setText("35");
+        housesTextField.setText("150");
         housesTextField.setToolTipText("Number of houses that the cities in the initial generation will have.");
         housesTextField.setMinimumSize(new java.awt.Dimension(64, 30));
         housesTextField.setPreferredSize(new java.awt.Dimension(90, 30));
@@ -569,7 +569,7 @@ public class GeneticAlgorithmGUI extends javax.swing.JFrame {
 
         shopAverageSpendLabel.setText("Shop Average Spend:");
 
-        shopAverageSpendTextField.setText("46");
+        shopAverageSpendTextField.setText("40");
         shopAverageSpendTextField.setToolTipText("The average amount of money each person spends at a shop every day. Values can varry from shop to shop.");
         shopAverageSpendTextField.setMinimumSize(new java.awt.Dimension(64, 30));
         shopAverageSpendTextField.setPreferredSize(new java.awt.Dimension(90, 30));
@@ -602,7 +602,7 @@ public class GeneticAlgorithmGUI extends javax.swing.JFrame {
 
         selectionParameterLabel.setText("Selection Parameter:");
 
-        selectionParameterTextField.setText("2.2");
+        selectionParameterTextField.setText("2.5");
         selectionParameterTextField.setToolTipText("Some selection methods require an additional parameter:\n- Fitness Proportional does not require a parameter.\n- Linear Ranking requires the linear ranking parameter, which is an integer determining the selection probability based on the rank of individuals.\n- Tournament requires the tournament size parameter, which is an integer specifying how many individuals participate in each tournament, and the winner is selected from them.\n- Boltzmann requires the temperature parameter, which is a double influencing the selection probability by considering the Boltzmann distribution.");
         selectionParameterTextField.setMinimumSize(new java.awt.Dimension(64, 30));
         selectionParameterTextField.setPreferredSize(new java.awt.Dimension(90, 30));
@@ -669,7 +669,7 @@ public class GeneticAlgorithmGUI extends javax.swing.JFrame {
 
         widthLabel.setText("City Width:");
 
-        widthTextField.setText("8");
+        widthTextField.setText("15");
         widthTextField.setToolTipText("The city's width.");
         widthTextField.setMinimumSize(new java.awt.Dimension(64, 30));
         widthTextField.setPreferredSize(new java.awt.Dimension(90, 30));
@@ -705,7 +705,7 @@ public class GeneticAlgorithmGUI extends javax.swing.JFrame {
 
         shopsLabel.setText("Number of Shops:");
 
-        shopsTextField.setText("15");
+        shopsTextField.setText("25");
         shopsTextField.setToolTipText("Number of shops that the cities in the initial generation will have.");
         shopsTextField.setMinimumSize(new java.awt.Dimension(64, 30));
         shopsTextField.setPreferredSize(new java.awt.Dimension(90, 30));
@@ -738,7 +738,7 @@ public class GeneticAlgorithmGUI extends javax.swing.JFrame {
 
         officesLabel.setText("Number of Offices:");
 
-        officesTextField.setText("10");
+        officesTextField.setText("25");
         officesTextField.setToolTipText("Number of offices that the cities in the initial generation will have.");
         officesTextField.setMinimumSize(new java.awt.Dimension(64, 30));
         officesTextField.setPreferredSize(new java.awt.Dimension(90, 30));
@@ -771,7 +771,7 @@ public class GeneticAlgorithmGUI extends javax.swing.JFrame {
 
         officeSalarySpendLabel.setText("Office Salary:");
 
-        officeSalaryTextField.setText("143");
+        officeSalaryTextField.setText("160");
         officeSalaryTextField.setToolTipText("The average amount of money each person earns at their work every day. Values can varry from shop to shop.");
         officeSalaryTextField.setMinimumSize(new java.awt.Dimension(64, 30));
         officeSalaryTextField.setPreferredSize(new java.awt.Dimension(90, 30));

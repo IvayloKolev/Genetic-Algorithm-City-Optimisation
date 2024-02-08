@@ -11,9 +11,6 @@ import Person.Person;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Random;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.TimeUnit;
 
 /**
  * Represents a city with various buildings and people.
@@ -304,23 +301,13 @@ public class City {
      * Simulates activities for each person in the city (going to work,
      * shopping, going home).
      *
-     * @throws java.lang.InterruptedException
      */
-    public void simulate() throws InterruptedException {
-        ExecutorService executor = Executors.newFixedThreadPool(people.size());
-
-        // Submit simulation tasks for each person in parallel
+    public void simulate() {
         for (Person person : people) {
-            executor.submit(() -> {
-                person.goToWork();
-                person.goShopping();
-                person.goHome();
-            });
+            person.goToWork();
+            person.goShopping();
+            person.goHome();
         }
-
-        // Shut down the executor and wait for all threads to finish
-        executor.shutdown();
-        executor.awaitTermination(Long.MAX_VALUE, TimeUnit.NANOSECONDS);
     }
 
     /**
