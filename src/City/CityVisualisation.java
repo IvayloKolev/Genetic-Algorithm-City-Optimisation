@@ -9,6 +9,7 @@ import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
@@ -137,6 +138,10 @@ public class CityVisualisation {
     private static Image getResizedBuildingImage(City city, int row, int col, int targetWidth, int targetHeight) {
         Image originalImage = getBuildingImage(city, row, col);
 
+        if (originalImage == null) {
+            return null;
+        }
+
         int imageWidth = originalImage.getWidth(null);
         int imageHeight = originalImage.getHeight(null);
 
@@ -227,8 +232,15 @@ public class CityVisualisation {
      */
     private static Image loadImage(String filename) {
         try {
-            File imgFile = new File("src/img/" + filename);
-            return ImageIO.read(imgFile);
+            ClassLoader classLoader = CityVisualisation.class.getClassLoader();
+            InputStream inputStream = classLoader.getResourceAsStream("img/" + filename);
+
+            if (inputStream != null) {
+                return ImageIO.read(inputStream);
+            } else {
+                debug.write("Error loading image: " + filename);
+                return null;
+            }
         } catch (IOException e) {
             debug.write("Error loading image: " + filename);
             return null;

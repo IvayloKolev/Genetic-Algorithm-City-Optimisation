@@ -8,10 +8,13 @@ import GeneticAlgorithm.GeneticAlgorithm;
 import GeneticAlgorithm.SelectionMethod;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
+import java.util.Arrays;
 import java.util.Map;
+import java.util.concurrent.ExecutionException;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
+import javax.swing.SwingWorker;
 
 /**
  * Contains all the logic behind the GUI
@@ -23,6 +26,7 @@ public class GeneticAlgorithmGUI extends javax.swing.JFrame {
     private static final long serialVersionUID = 1L;
 
     Debug debug = new Debug();
+    private KeyAdapter tournamentKeyListener;
 
     /**
      * Creates new form
@@ -102,6 +106,13 @@ public class GeneticAlgorithmGUI extends javax.swing.JFrame {
                     }
                 }
             });
+        }
+    }
+
+    private void removeTournamentKeyListener() {
+        if (tournamentKeyListener != null) {
+            selectionParameterTextField.removeKeyListener(tournamentKeyListener);
+            tournamentKeyListener = null;
         }
     }
 
@@ -974,7 +985,47 @@ public class GeneticAlgorithmGUI extends javax.swing.JFrame {
     }//GEN-LAST:event_mutationChanceTextFieldActionPerformed
 
     private void selectionMethodComboBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_selectionMethodComboBoxActionPerformed
-        debug.write("Selected Selection Method: " + selectionMethodComboBox.getSelectedItem());
+        String selectedMethod = (String) selectionMethodComboBox.getSelectedItem();
+        selectionParameterTextField.setEnabled(true);
+
+        // Remove the existing KeyListener
+        removeTournamentKeyListener();
+
+        // Clear and disable parameter fields for Fitness_Proportional
+        switch (selectedMethod) {
+            case "Fitness_Proportional" -> {
+                selectionParameterTextField.setText("");
+                selectionParameterTextField.setEnabled(false);
+            }
+            case "Tournament" -> {
+                // Try to parse the input as an integer
+                try {
+                    int parameterValue = Integer.parseInt(selectionParameterTextField.getText());
+                    // If successful, update the parameter field with the parsed value
+                    selectionParameterTextField.setText(Integer.toString(parameterValue));
+                } catch (NumberFormatException e) {
+                    // If not an integer, clear the parameter field
+                    selectionParameterTextField.setText("");
+                }
+                // Set up a KeyListener to restrict input to integers only
+                tournamentKeyListener = new KeyAdapter() {
+                    @Override
+                    public void keyTyped(KeyEvent e) {
+                        char c = e.getKeyChar();
+                        if (!Character.isDigit(c)) {
+                            // If the entered character is not a digit, consume the event
+                            e.consume();
+                        }
+                    }
+                };
+
+                selectionParameterTextField.addKeyListener(tournamentKeyListener);
+            }
+            default -> {
+            }
+        }
+
+        debug.write("Selected Selection Method: " + selectedMethod);
     }//GEN-LAST:event_selectionMethodComboBoxActionPerformed
 
     private void populationSizeTextFieldActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_populationSizeTextFieldActionPerformed
@@ -1028,81 +1079,108 @@ public class GeneticAlgorithmGUI extends javax.swing.JFrame {
     private void runGAButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_runGAButtonActionPerformed
         outputTextArea.setText(null);
         outputPanel.removeAll();
-        try {
-            // Collect parameters from the GUI fields
-            int generations = Integer.parseInt(generationsTextField.getText());
-            int width = Integer.parseInt(widthTextField.getText()) * 2 + 1;
-            int height = Integer.parseInt(heightTextField.getText()) * 2 + 1;;
-            // Force the city to be square
-            if (width != height) {
-                outputTextArea.append("Width and height must be the same.\n");
-                return;
+
+        // Use SwingWorker for running the genetic algorithm in a separate thread
+        SwingWorker<Map<String, Object>, Void> worker = new SwingWorker<Map<String, Object>, Void>() {
+            @Override
+            protected Map<String, Object> doInBackground() throws Exception {
+                try {
+                    // Collect parameters from the GUI fields
+                    int generations = Integer.parseInt(generationsTextField.getText());
+                    int width = Integer.parseInt(widthTextField.getText()) * 2 + 1;
+                    int height = Integer.parseInt(heightTextField.getText()) * 2 + 1;
+
+                    // Force the city to be square
+                    if (width != height) {
+                        outputTextArea.append("Width and height must be the same.\n");
+                        return null;
+                    }
+
+                    int numHouses = Integer.parseInt(housesTextField.getText());
+                    int numOffices = Integer.parseInt(officesTextField.getText());
+                    int numShops = Integer.parseInt(shopsTextField.getText());
+                    int populationSize = Integer.parseInt(populationSizeTextField.getText());
+                    int simulationDays = Integer.parseInt(simulationDaysTextField.getText());
+
+                    double centerBias = Double.parseDouble(centerBiasTextField.getText());
+                    double mutationChance = Double.parseDouble(mutationChanceTextField.getText());
+                    double officeSalary = Double.parseDouble(officeSalaryTextField.getText());
+
+                    double selectionParameter = Double.parseDouble(selectionParameterTextField.getText());
+
+                    double shopAverageSpend = Double.parseDouble(shopAverageSpendTextField.getText());
+                    double startingMoney = Double.parseDouble(startingMoneyTextField.getText());
+                    double travelCost = Double.parseDouble(travelCostTextField.getText());
+                    double variation = Double.parseDouble(variationTextField.getText());
+
+                    // Get selected items from combo boxes
+                    SelectionMethod selectedSelectionMethod = SelectionMethod.valueOf((String) selectionMethodComboBox.getSelectedItem());
+                    CrossoverMethod selectedCrossoverMethod = CrossoverMethod.valueOf((String) crossoverMethodComboBox.getSelectedItem());
+
+                    // Create and run the GeneticAlgorithm
+                    GeneticAlgorithm geneticAlgorithm = new GeneticAlgorithm();
+                    return geneticAlgorithm.runGeneticAlgorithm(generations,
+                            simulationDays,
+                            selectedSelectionMethod,
+                            selectionParameter,
+                            selectedCrossoverMethod,
+                            mutationChance,
+                            populationSize,
+                            width,
+                            height,
+                            numHouses,
+                            numShops,
+                            numOffices,
+                            shopAverageSpend,
+                            officeSalary,
+                            variation,
+                            centerBias,
+                            startingMoney,
+                            travelCost);
+
+                } catch (NumberFormatException e) {
+                    // Handle parsing errors (invalid input in text fields)
+                    outputTextArea.append("Invalid input. Please enter valid numeric values.\n");
+                } catch (InterruptedException e) {
+                    // Handle other exceptions if needed
+                    outputTextArea.append("An error occurred: " + e.getMessage() + "\n" + Arrays.toString(e.getStackTrace()));
+                }
+
+                return null;
             }
-            int numHouses = Integer.parseInt(housesTextField.getText());
-            int numOffices = Integer.parseInt(officesTextField.getText());
-            int numShops = Integer.parseInt(shopsTextField.getText());
-            int populationSize = Integer.parseInt(populationSizeTextField.getText());
-            int simulationDays = Integer.parseInt(simulationDaysTextField.getText());
 
-            double centerBias = Double.parseDouble(centerBiasTextField.getText());
-            double mutationChance = Double.parseDouble(mutationChanceTextField.getText());
-            double officeSalary = Double.parseDouble(officeSalaryTextField.getText());
-            double selectionParameter = Double.parseDouble(selectionParameterTextField.getText());
-            double shopAverageSpend = Double.parseDouble(shopAverageSpendTextField.getText());
-            double startingMoney = Double.parseDouble(startingMoneyTextField.getText());
-            double travelCost = Double.parseDouble(travelCostTextField.getText());
-            double variation = Double.parseDouble(variationTextField.getText());
+            @Override
+            protected void done() {
+                try {
+                    // Get the result of the background task
+                    Map<String, Object> genAlgOutput = get();
 
-            // Get selected items from combo boxes
-            SelectionMethod selectedSelectionMethod = SelectionMethod.valueOf((String) selectionMethodComboBox.getSelectedItem());
-            CrossoverMethod selectedCrossoverMethod = CrossoverMethod.valueOf((String) crossoverMethodComboBox.getSelectedItem());
+                    if (genAlgOutput != null) {
+                        // Get the best city and visualize it
+                        City bestCity = (City) genAlgOutput.get("bestCity");
+                        JPanel outputImagePanel = new JPanel();
+                        outputImagePanel.setSize(outputPanel.getWidth(), outputPanel.getHeight());
+                        CityVisualisation.displayCity(bestCity, outputImagePanel);
 
-            // Create and run the GeneticAlgorithm
-            GeneticAlgorithm geneticAlgorithm = new GeneticAlgorithm();
-            Map<String, Object> genAlgOutput = geneticAlgorithm.runGeneticAlgorithm(generations,
-                    simulationDays,
-                    selectedSelectionMethod,
-                    selectionParameter,
-                    selectedCrossoverMethod,
-                    mutationChance,
-                    populationSize,
-                    width,
-                    height,
-                    numHouses,
-                    numShops,
-                    numOffices,
-                    shopAverageSpend,
-                    officeSalary,
-                    variation,
-                    centerBias,
-                    startingMoney,
-                    travelCost);
+                        // Print the result directly to the outputTextArea
+                        Map.Entry<String, Object> resultEntry = genAlgOutput.entrySet().iterator().next();
+                        String resultText = resultEntry.getKey() + ": " + resultEntry.getValue() + "\n";
+                        outputTextArea.setText(resultText);
 
-            // Get the best city and visualize it
-            City bestCity = (City) genAlgOutput.get("bestCity");
-            JPanel outputImagePanel = new JPanel();
-            outputImagePanel.setSize(outputPanel.getWidth(), outputPanel.getHeight());
-            CityVisualisation.displayCity(bestCity, outputImagePanel);
+                        // Replace the old outputImagePanel with the new one
+                        outputPanel.removeAll();
+                        outputPanel.add(outputImagePanel);
+                        outputPanel.revalidate();
+                        outputPanel.repaint();
+                    }
+                } catch (InterruptedException | ExecutionException e) {
+                    outputTextArea.append("An error occurred: " + e.getMessage() + "\n" + Arrays.toString(e.getStackTrace()));
+                }
+            }
+        };
 
-            // Print the result directly to the outputTextArea
-            Map.Entry<String, Object> resultEntry = genAlgOutput.entrySet().iterator().next();
-            String resultText = resultEntry.getKey() + ": " + resultEntry.getValue() + "\n";
-            outputTextArea.setText(resultText);
-
-            // Replace the old outputImagePanel with the new one
-            outputPanel.removeAll();
-            outputPanel.add(outputImagePanel);
-            outputPanel.revalidate();
-            outputPanel.repaint();
-
-        } catch (NumberFormatException e) {
-            // Handle parsing errors (invalid input in text fields)
-            outputTextArea.append("Invalid input. Please enter valid numeric values.\n");
-        } catch (Exception e) {
-            // Handle other exceptions if needed
-            outputTextArea.append("An error occurred: " + e.getMessage() + "\n");
-        }
-
+        // Execute the SwingWorker
+        worker.execute();
     }//GEN-LAST:event_runGAButtonActionPerformed
 
     private void crossoverMethodComboBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_crossoverMethodComboBoxActionPerformed
