@@ -1,4 +1,5 @@
 /build/
 /dist/
 /nbproject/private/
-/src/img/ExportedImages/
+/src/img/ExportedImages/*
+!/src/img/ExportedImages/.gitkeep
