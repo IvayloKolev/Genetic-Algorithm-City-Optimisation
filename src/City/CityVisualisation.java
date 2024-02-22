@@ -63,8 +63,14 @@ public class CityVisualisation {
         int panelWidth = displayPanel.getWidth();
         int panelHeight = displayPanel.getHeight();
 
-        int preferredImageWidth = panelWidth / cols;
-        int preferredImageHeight = panelHeight / rows;
+        // Check if the panel dimensions are valid
+        if (panelWidth <= 0 || panelHeight <= 0) {
+            debug.write("Invalid panel dimensions.");
+            return displayPanel;
+        }
+
+        int preferredImageWidth = Math.max(panelWidth / cols, 1);
+        int preferredImageHeight = Math.max(panelHeight / rows, 1);
 
         for (int row = 0; row < rows; row++) {
             for (int col = 0; col < cols; col++) {
@@ -385,4 +391,56 @@ public class CityVisualisation {
 
         return rotatedImage;
     }
+
+    public void exportStitchedImage(City city, String imageName, String imageType) {
+        char[][] gridLayout = city.getGridLayout();
+        int rows = gridLayout.length;
+        int cols = gridLayout[0].length;
+
+        // Calculate the dimensions of the stitched image
+        int preferredImageWidth = 80; // Set your preferred width
+        int preferredImageHeight = 80; // Set your preferred height
+
+        int totalWidth = preferredImageWidth * cols;
+        int totalHeight = preferredImageHeight * rows;
+
+        // Create a BufferedImage for the stitched image
+        BufferedImage stitchedImage = new BufferedImage(totalWidth, totalHeight, BufferedImage.TYPE_INT_ARGB);
+        Graphics2D g2d = stitchedImage.createGraphics();
+
+        for (int row = 0; row < rows; row++) {
+            for (int col = 0; col < cols; col++) {
+                Image buildingImage = getResizedBuildingImage(city, row, col, preferredImageWidth, preferredImageHeight);
+
+                if (buildingImage != null) {
+                    g2d.drawImage(buildingImage, col * preferredImageWidth, row * preferredImageHeight, null);
+                }
+            }
+        }
+
+        g2d.dispose();
+
+        // Save the stitched image to the specified directory
+        String path = "src/img/ExportedImages";
+        File directory = new File(path);
+
+        if (!directory.exists()) {
+            if (!directory.mkdirs()) {
+                System.out.println("Error creating directory: " + path);
+                return;
+            }
+        }
+
+        // Construct the file path
+        String filePath = path + File.separator + imageName;
+
+        try {
+            File outputImage = new File(filePath);
+            ImageIO.write(stitchedImage, imageType, outputImage);
+            System.out.println("Stitched image saved to: " + filePath);
+        } catch (IOException e) {
+            System.out.println("Error saving stitched image: " + e.getMessage());
+        }
+    }
+
 }
