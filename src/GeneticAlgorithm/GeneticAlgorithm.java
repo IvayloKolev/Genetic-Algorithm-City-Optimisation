@@ -338,9 +338,12 @@ public class GeneticAlgorithm {
      * @return A formatted output string.
      */
     private String generateBestCityOutput(int generations, City bestCity) {
+        double roundedFitness = Math.round(bestCity.getFitness() * 100.0) / 100.0;
+        double roundedMoney = Math.round(bestCity.getTotalMoney() * 100.0) / 100.0;
+
         return "\nBest City After " + generations + " Generations:"
-                + "\nFitness: " + bestCity.getFitness()
-                + "\nTotal Money: " + bestCity.getTotalMoney()
+                + "\nFitness: " + roundedFitness
+                + "\nTotal Money: " + roundedMoney
                 + "\nInactive People: " + bestCity.countInactivePeople()
                 + "\nActive People: " + bestCity.countActivePeople()
                 + "\nRichest Person: \n" + bestCity.findRichestPerson().toString();

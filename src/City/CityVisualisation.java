@@ -1,8 +1,6 @@
 package City;
 
 import Debug.Debug;
-import java.awt.Dimension;
-import java.awt.FlowLayout;
 import java.awt.Graphics2D;
 import java.awt.Image;
 import java.awt.geom.AffineTransform;
@@ -40,61 +38,29 @@ public class CityVisualisation {
 
     /**
      * Iterate through the gridLayout of the city, get images for the
-     * appropriate buildings or road sections, and display the completed city.
+     * appropriate buildings or road sections, and display the stitched city
+     * image.
      *
      * @param city The City object.
      * @param displayPanel The JPanel to display the city image.
-     * @return The modified displayPanel with the final image inside.
+     * @return The modified displayPanel with the stitched city image inside.
+     * @throws java.io.IOException
      */
-    public static JPanel displayCity(City city, JPanel displayPanel) {
-        char[][] gridLayout = city.getGridLayout();
+    public static JPanel displayCity(City city, JPanel displayPanel) throws IOException {
+        Image stitchedImage = new CityVisualisation().createStitchedImage(city, displayPanel);
 
-        if (gridLayout.length == 0 || gridLayout[0].length == 0) {
-            debug.write("Invalid city layout.");
+        if (stitchedImage == null) {
+            debug.write("Failed to create stitched image.");
             return displayPanel;
         }
 
-        int rows = gridLayout.length;
-        int cols = gridLayout[0].length;
+        ImageIcon icon = new ImageIcon(stitchedImage);
+        JLabel label = new JLabel(icon);
 
-        // Set layout manager to FlowLayout
-        displayPanel.setLayout(new FlowLayout(FlowLayout.LEFT, 0, 0));
+        displayPanel.removeAll();  // Clear existing components
+        displayPanel.add(label);   // Add the label with the stitched image
 
-        int panelWidth = displayPanel.getWidth();
-        int panelHeight = displayPanel.getHeight();
-
-        // Check if the panel dimensions are valid
-        if (panelWidth <= 0 || panelHeight <= 0) {
-            debug.write("Invalid panel dimensions.");
-            return displayPanel;
-        }
-
-        int preferredImageWidth = Math.max(panelWidth / cols, 1);
-        int preferredImageHeight = Math.max(panelHeight / rows, 1);
-
-        for (int row = 0; row < rows; row++) {
-            for (int col = 0; col < cols; col++) {
-                Image buildingImage = getResizedBuildingImage(city, row, col, preferredImageWidth, preferredImageHeight);
-
-                ImageIcon icon = new ImageIcon(buildingImage);
-                JLabel label = new JLabel(icon);
-
-                // Set the preferred size of the label
-                label.setPreferredSize(new Dimension(preferredImageWidth, preferredImageHeight));
-
-                displayPanel.add(label);
-            }
-        }
-
-        // Check if the city is not square and adjust panel size accordingly
-        if (rows != cols) {
-            int newPanelWidth = preferredImageWidth * rows;
-            int newPanelHeight = preferredImageHeight * cols;
-
-            displayPanel.setPreferredSize(new Dimension(newPanelWidth, newPanelHeight));
-        }
-
-        debug.write("Displayed the completed city in the JPanel.");
+        debug.write("Displayed the stitched city image in the JPanel.");
 
         return displayPanel;
     }
@@ -392,14 +358,63 @@ public class CityVisualisation {
         return rotatedImage;
     }
 
-    public void exportStitchedImage(City city, String imageName, String imageType) {
+    /**
+     * Create a stitched image of the city.
+     *
+     * @param city The City object.
+     * @param displayPanel The JPanel to display the city image.
+     * @return The stitched image of the city.
+     */
+    public Image createStitchedImage(City city, JPanel displayPanel) {
+        char[][] gridLayout = city.getGridLayout();
+        int rows = gridLayout.length;
+        int cols = gridLayout[0].length;
+
+        int panelWidth = displayPanel.getWidth();
+        int panelHeight = displayPanel.getHeight();
+
+        // Check if the panel dimensions are valid
+        if (panelWidth <= 0 || panelHeight <= 0) {
+            debug.write("Invalid panel dimensions.");
+            return null;
+        }
+
+        // Calculate the preferred image size based on the minimum of panel width and height
+        int preferredImageSize = Math.min(panelWidth / cols, panelHeight / rows);
+
+        // Create a BufferedImage for the stitched image
+        BufferedImage stitchedImage = new BufferedImage(panelWidth, panelHeight, BufferedImage.TYPE_INT_ARGB);
+        Graphics2D g2d = stitchedImage.createGraphics();
+
+        for (int row = 0; row < rows; row++) {
+            for (int col = 0; col < cols; col++) {
+                Image buildingImage = getResizedBuildingImage(city, row, col, preferredImageSize, preferredImageSize);
+
+                if (buildingImage != null) {
+                    g2d.drawImage(buildingImage, col * preferredImageSize, row * preferredImageSize, null);
+                }
+            }
+        }
+
+        g2d.dispose();
+
+        return stitchedImage;
+    }
+
+    /**
+     * Create a stitched image of the city.
+     *
+     * @param city The City object.
+     * @return The stitched image of the city.
+     */
+    public Image createStitchedImage(City city) {
         char[][] gridLayout = city.getGridLayout();
         int rows = gridLayout.length;
         int cols = gridLayout[0].length;
 
         // Calculate the dimensions of the stitched image
-        int preferredImageWidth = 80; 
-        int preferredImageHeight = 80; 
+        int preferredImageWidth = 80;
+        int preferredImageHeight = 80;
 
         int totalWidth = preferredImageWidth * cols;
         int totalHeight = preferredImageHeight * rows;
@@ -419,6 +434,13 @@ public class CityVisualisation {
         }
 
         g2d.dispose();
+
+        return stitchedImage;
+    }
+
+    public void exportStitchedImage(City city, String imageName, String imageType) {
+        // Create a BufferedImage for the stitched image
+        BufferedImage stitchedImage = (BufferedImage) createStitchedImage(city);
 
         // Save the stitched image to the specified directory
         String path = "src/img/ExportedImages";
@@ -441,6 +463,7 @@ public class CityVisualisation {
         } catch (IOException e) {
             System.out.println("Error saving stitched image: " + e.getMessage());
         }
+
     }
 
 }
