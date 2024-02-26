@@ -6,6 +6,8 @@ import Debug.Debug;
 import GeneticAlgorithm.CrossoverMethod;
 import GeneticAlgorithm.GeneticAlgorithm;
 import GeneticAlgorithm.SelectionMethod;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.io.IOException;
@@ -18,6 +20,7 @@ import javax.swing.DefaultComboBoxModel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.SwingWorker;
+import javax.swing.Timer;
 
 /**
  * Contains all the logic behind the GUI
@@ -1085,8 +1088,19 @@ public class GeneticAlgorithmGUI extends javax.swing.JFrame {
     }//GEN-LAST:event_travelCostTextFieldActionPerformed
 
     private void runGAButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_runGAButtonActionPerformed
-        outputTextArea.setText(null);
-        outputPanel.removeAll();
+        outputTextArea.setText("Searching");
+
+        // Add a timer for the three dots animation
+        Timer timer = new Timer(300, new ActionListener() {
+            int dotsCount = 0;
+
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                dotsCount = (dotsCount % 3) + 1;
+                String dots = ".".repeat(dotsCount);
+                outputTextArea.setText("Searching" + dots);
+            }
+        });
 
         // Use SwingWorker for running the genetic algorithm in a separate thread
         SwingWorker<Map<String, Object>, Void> worker = new SwingWorker<Map<String, Object>, Void>() {
@@ -1142,10 +1156,10 @@ public class GeneticAlgorithmGUI extends javax.swing.JFrame {
 
                 } catch (NumberFormatException e) {
                     // Handle parsing errors (invalid input in text fields)
-                    outputTextArea.append("Invalid input. Please enter valid numeric values.\n");
+                    outputTextArea.setText("Invalid input. Please enter valid numeric values.\n");
                 } catch (InterruptedException e) {
                     // Handle other exceptions if needed
-                    outputTextArea.append("An error occurred: " + e.getMessage() + "\n" + Arrays.toString(e.getStackTrace()));
+                    outputTextArea.setText("An error occurred: " + e.getMessage() + "\n" + Arrays.toString(e.getStackTrace()));
                 }
 
                 return null;
@@ -1153,6 +1167,7 @@ public class GeneticAlgorithmGUI extends javax.swing.JFrame {
 
             @Override
             protected void done() {
+                timer.stop();
                 try {
                     // Get the result of the background task
                     Map<String, Object> genAlgOutput = get();
@@ -1167,6 +1182,7 @@ public class GeneticAlgorithmGUI extends javax.swing.JFrame {
                         // Print the result directly to the outputTextArea
                         Map.Entry<String, Object> resultEntry = genAlgOutput.entrySet().iterator().next();
                         String resultText = resultEntry.getKey() + ": " + resultEntry.getValue() + "\n";
+                        outputTextArea.setText("");
                         outputTextArea.setText(resultText);
 
                         // Replace the old outputImagePanel with the new one
@@ -1176,15 +1192,16 @@ public class GeneticAlgorithmGUI extends javax.swing.JFrame {
                         outputPanel.repaint();
                     }
                 } catch (InterruptedException | ExecutionException e) {
-                    outputTextArea.append("An error occurred: " + e.getMessage() + "\n" + Arrays.toString(e.getStackTrace()));
+                    outputTextArea.setText("An error occurred: " + e.getMessage() + "\n" + Arrays.toString(e.getStackTrace()));
                 } catch (IOException ex) {
                     Logger.getLogger(GeneticAlgorithmGUI.class.getName()).log(Level.SEVERE, null, ex);
                 }
             }
         };
 
-        // Execute the SwingWorker
+        // Execute the SwingWorker and start the timer
         worker.execute();
+        timer.start();
     }//GEN-LAST:event_runGAButtonActionPerformed
 
     private void crossoverMethodComboBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_crossoverMethodComboBoxActionPerformed
