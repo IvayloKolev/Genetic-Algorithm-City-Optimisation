@@ -116,6 +116,11 @@ public class GeneticAlgorithmGUI extends javax.swing.JFrame {
         }
     }
 
+    private void showProjectInformation() {
+        ProjectInformationWindow infoWindow = new ProjectInformationWindow();
+        infoWindow.setVisible(true);
+    }
+
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -1090,12 +1095,6 @@ public class GeneticAlgorithmGUI extends javax.swing.JFrame {
                     int width = Integer.parseInt(widthTextField.getText()) * 2 + 1;
                     int height = Integer.parseInt(heightTextField.getText()) * 2 + 1;
 
-                    // Force the city to be square
-                    if (width != height) {
-                        outputTextArea.append("Width and height must be the same.\n");
-                        return null;
-                    }
-
                     int numHouses = Integer.parseInt(housesTextField.getText());
                     int numOffices = Integer.parseInt(officesTextField.getText());
                     int numShops = Integer.parseInt(shopsTextField.getText());
@@ -1219,6 +1218,8 @@ public class GeneticAlgorithmGUI extends javax.swing.JFrame {
         java.awt.EventQueue.invokeLater(() -> {
             GeneticAlgorithmGUI gui = new GeneticAlgorithmGUI();
             gui.setVisible(true);
+            gui.setTitle("Grid-Based City Simulation and Optimisation with Genetic Algorithms");
+            gui.showProjectInformation();
         });
     }
 

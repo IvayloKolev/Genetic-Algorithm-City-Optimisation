@@ -398,8 +398,8 @@ public class CityVisualisation {
         int cols = gridLayout[0].length;
 
         // Calculate the dimensions of the stitched image
-        int preferredImageWidth = 80; // Set your preferred width
-        int preferredImageHeight = 80; // Set your preferred height
+        int preferredImageWidth = 80; 
+        int preferredImageHeight = 80; 
 
         int totalWidth = preferredImageWidth * cols;
         int totalHeight = preferredImageHeight * rows;

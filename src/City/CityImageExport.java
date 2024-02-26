@@ -12,11 +12,11 @@ public class CityImageExport {
 
     public static void main(String[] args) {
         try {
-            int width = 41;
-            int height = 41;
-            int numHouses = 150;
-            int numShops = 100;
-            int numOffices = 150;
+            int width = 15;
+            int height = 21;
+            int numHouses = 10;
+            int numShops = 6;
+            int numOffices = 5;
             double shopAverageSpend = 30;
             double officeAverageSalary = 130;
             double variation = 25;
@@ -24,7 +24,7 @@ public class CityImageExport {
 
             CityVisualisation visualisation = new CityVisualisation();
 
-            for (int i = 0; i < 100; i++) {
+            for (int i = 0; i < 10; i++) {
                 String fileName = "stitchedImage" + (i + 1) + ".png";
                 City city = City.initializeRandomCity(width, height, numHouses, numShops, numOffices, shopAverageSpend, officeAverageSalary, variation, centerBias);
 
