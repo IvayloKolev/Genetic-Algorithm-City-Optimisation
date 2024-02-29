@@ -21,11 +21,7 @@ public class Selection {
      *
      * @param population The population of cities.
      * @param selectionMethod The preferred selection method. Supported methods
-     * are: 
-     * - Fitness_Proportional 
-     * - Linear_Ranking 
-     * - Tournament 
-     * - Boltzmann
+     * are: - Fitness_Proportional - Linear_Ranking - Tournament - Boltzmann
      * @param parameters Additional parameters required by the selection method.
      * The required parameters vary based on the selection method.
      * @return An ArrayList of selected parents.
@@ -82,7 +78,21 @@ public class Selection {
         return selectedParents;
     }
 
-    // Helper method for selecting parents using Linear Ranking Selection
+    /**
+     * Selects parents from a population using Linear Ranking Selection.
+     *
+     * This method applies Linear Ranking Selection to choose a specified number
+     * of parents from the given population based on the provided selection
+     * pressure.
+     *
+     * @param population The list of City objects representing the population.
+     * @param numberOfParents The number of parents to be selected.
+     * @param selectionPressure The selection pressure parameter used in Linear
+     * Ranking Selection.
+     * @return An ArrayList of City objects representing the selected parents.
+     * @throws IllegalArgumentException If the selection pressure is not within
+     * the valid range.
+     */
     private static ArrayList<City> selectParentsUsingLinearRanking(ArrayList<City> population, int numberOfParents, double selectionPressure) {
         ArrayList<City> selectedParents = new ArrayList<>();
         for (int i = 0; i < numberOfParents; i++) {
@@ -92,7 +102,20 @@ public class Selection {
         return selectedParents;
     }
 
-    // Helper method for selecting parents using Tournament Selection
+    /**
+     * Selects parents from a population using Tournament Selection.
+     *
+     * This method applies Tournament Selection to choose a specified number of
+     * parents from the given population based on the provided tournament size.
+     *
+     * @param population The list of City objects representing the population.
+     * @param numberOfParents The number of parents to be selected.
+     * @param tournamentSize The size of the tournament used in Tournament
+     * Selection.
+     * @return An ArrayList of City objects representing the selected parents.
+     * @throws IllegalArgumentException If the tournament size is not within the
+     * valid range.
+     */
     private static ArrayList<City> selectParentsUsingTournament(ArrayList<City> population, int numberOfParents, int tournamentSize) {
         ArrayList<City> selectedParents = new ArrayList<>();
         for (int i = 0; i < numberOfParents; i++) {
@@ -102,7 +125,19 @@ public class Selection {
         return selectedParents;
     }
 
-    // Helper method for selecting parents using Boltzmann Selection
+    /**
+     * Selects parents from a population using Boltzmann Selection.
+     *
+     * This method applies Boltzmann Selection to choose a specified number of
+     * parents from the given population based on the provided temperature.
+     *
+     * @param population The list of City objects representing the population.
+     * @param numberOfParents The number of parents to be selected.
+     * @param temperature The temperature parameter used in Boltzmann Selection.
+     * @return An ArrayList of City objects representing the selected parents.
+     * @throws IllegalArgumentException If the temperature is not within the
+     * valid range.
+     */
     private static ArrayList<City> selectParentsUsingBoltzmann(ArrayList<City> population, int numberOfParents, double temperature) {
         ArrayList<City> selectedParents = new ArrayList<>();
         for (int i = 0; i < numberOfParents; i++) {
@@ -113,7 +148,14 @@ public class Selection {
     }
 
     /**
-     * Fitness Proportional Selection (Roulette Wheel Selection).
+     * Fitness Proportional Selection (Roulette Wheel Selection). This selection
+     * method simulates a roulette wheel, where the probability of selecting a
+     * city is proportional to its fitness. The higher the fitness, the larger
+     * the slice on the wheel. A random value within the total fitness range is
+     * generated, and the method iterates through the population, accumulating
+     * fitness values until the accumulated fitness exceeds the random value.
+     * The selected city is returned. If the selection fails, a fallback city is
+     * chosen randomly.
      *
      * @param population The list of cities to select from.
      * @return The selected city.
@@ -144,7 +186,11 @@ public class Selection {
     }
 
     /**
-     * Tournament Selection.
+     * Tournament Selection. This selection method involves holding tournaments
+     * among randomly chosen individuals from the population. A tournament is
+     * created by randomly selecting individuals, and the fittest individual
+     * from the tournament is selected. This process is repeated for the
+     * specified number of tournaments, and the selected city is returned.
      *
      * @param population The list of cities to select from.
      * @param numberOfTournaments The number of tournaments held between genes.
@@ -164,7 +210,14 @@ public class Selection {
     }
 
     /**
-     * Boltzmann Selection.
+     * Boltzmann Selection. This selection method introduces a temperature
+     * parameter that influences the likelihood of selecting cities. The total
+     * weight is calculated based on the Boltzmann formula, where the weight of
+     * each city is determined by its fitness and the temperature. A random
+     * value is generated within the total weight range, and the method iterates
+     * through the population, accumulating weights until the accumulated weight
+     * exceeds the random value. The selected city is returned. If the selection
+     * fails, a fallback city is chosen randomly.
      *
      * @param population The list of cities to select from.
      * @param temperature The temperature parameter.
@@ -199,10 +252,16 @@ public class Selection {
     }
 
     /**
-     * Linear Ranking Selection.
+     * Linear Ranking Selection. This selection method ranks the population
+     * based on fitness, assuming the population is sorted in descending order.
+     * The total probability for linear ranking selection is calculated,
+     * considering the selection pressure. A random value is generated within
+     * the total probability range, and the method iterates through the
+     * population, accumulating probabilities until the accumulated probability
+     * exceeds the random value. The selected city is returned. If the selection
+     * fails, a fallback city is chosen randomly.
      *
-     * @param population The list of cities to select from (assumed to be sorted
-     * by fitness).
+     * @param population The list of cities to select from.
      * @param selectionPressure The selection pressure parameter (typically
      * between 1.5 and 2.0).
      * @return The selected city.

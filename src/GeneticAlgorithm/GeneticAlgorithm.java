@@ -100,7 +100,11 @@ public class GeneticAlgorithm {
      * @return The fitness value for the city.
      */
     public static double evaluateCityFitness(City city) {
-        double fitness = city.getTotalMoney() - (city.countInactivePeople() * 100);
+
+        double fitness = 0.0;
+        if (city != null) {
+            fitness = city.getTotalMoney() - (city.countInactivePeople() * 100);
+        }
 
         // If fitness is negative, set it to 0
         fitness = Math.max(0, Math.floor(fitness * 100) / 100);
@@ -341,11 +345,12 @@ public class GeneticAlgorithm {
         double roundedFitness = Math.round(bestCity.getFitness() * 100.0) / 100.0;
         double roundedMoney = Math.round(bestCity.getTotalMoney() * 100.0) / 100.0;
 
-        return "\nBest City After " + generations + " Generations:"
-                + "\nFitness: " + roundedFitness
-                + "\nTotal Money: " + roundedMoney
-                + "\nInactive People: " + bestCity.countInactivePeople()
-                + "\nActive People: " + bestCity.countActivePeople()
-                + "\nRichest Person: \n" + bestCity.findRichestPerson().toString();
+        return "Best City After " + generations + " Generations:\n"
+                + "Fitness: " + roundedFitness + "\n"
+                + "Total Money: " + roundedMoney + "\n"
+                + "Inactive People: " + bestCity.countInactivePeople() + "\n"
+                + "Active People: " + bestCity.countActivePeople() + "\n"
+                + "Richest Person: \n" + bestCity.findRichestPerson().toString();
+
     }
 }

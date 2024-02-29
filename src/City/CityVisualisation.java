@@ -1,6 +1,7 @@
 package City;
 
 import Debug.Debug;
+import java.awt.FlowLayout;
 import java.awt.Graphics2D;
 import java.awt.Image;
 import java.awt.geom.AffineTransform;
@@ -58,6 +59,7 @@ public class CityVisualisation {
         JLabel label = new JLabel(icon);
 
         displayPanel.removeAll();  // Clear existing components
+        displayPanel.setLayout(new FlowLayout(FlowLayout.CENTER));
         displayPanel.add(label);   // Add the label with the stitched image
 
         debug.write("Displayed the stitched city image in the JPanel.");
@@ -438,6 +440,19 @@ public class CityVisualisation {
         return stitchedImage;
     }
 
+    /**
+     * Exports the stitched image of a City to a specified file.
+     *
+     * This method creates a BufferedImage for the stitched image of the given
+     * City and saves it to the specified directory with the provided image name
+     * and type.
+     *
+     * @param city The City object to generate the stitched image from.
+     * @param imageName The name to be given to the exported image file.
+     * @param imageType The type of the image file (e.g., "png", "jpg").
+     * @throws IllegalArgumentException If the provided image type is not
+     * supported.
+     */
     public void exportStitchedImage(City city, String imageName, String imageType) {
         // Create a BufferedImage for the stitched image
         BufferedImage stitchedImage = (BufferedImage) createStitchedImage(city);

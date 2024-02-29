@@ -12,15 +12,15 @@ public class CityImageExport {
 
     public static void main(String[] args) {
         try {
-            int width = 15;
-            int height = 21;
-            int numHouses = 10;
-            int numShops = 6;
-            int numOffices = 5;
+            int width = 13;
+            int height = 13;
+            int numHouses = 18;
+            int numShops = 9;
+            int numOffices = 9;
             double shopAverageSpend = 30;
             double officeAverageSalary = 130;
             double variation = 25;
-            double centerBias = 2.5;
+            double centerBias = 2.0;
 
             CityVisualisation visualisation = new CityVisualisation();
 

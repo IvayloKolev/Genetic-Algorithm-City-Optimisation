@@ -912,7 +912,9 @@ public class GeneticAlgorithmGUI extends javax.swing.JFrame {
 
         outputTextArea.setEditable(false);
         outputTextArea.setColumns(20);
+        outputTextArea.setFont(new java.awt.Font("Segoe UI", 0, 18)); // NOI18N
         outputTextArea.setRows(5);
+        outputTextArea.setText("Please set the parameters for the algorithm.\n");
         jScrollPane2.setViewportView(outputTextArea);
 
         javax.swing.GroupLayout outputInfoPanelLayout = new javax.swing.GroupLayout(outputInfoPanel);
@@ -956,7 +958,7 @@ public class GeneticAlgorithmGUI extends javax.swing.JFrame {
                     .addComponent(jPanel22, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(outputInfoPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(outputPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(outputPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
@@ -1088,7 +1090,7 @@ public class GeneticAlgorithmGUI extends javax.swing.JFrame {
     }//GEN-LAST:event_travelCostTextFieldActionPerformed
 
     private void runGAButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_runGAButtonActionPerformed
-        outputTextArea.setText("Searching");
+        outputTextArea.setText("Running");
 
         // Add a timer for the three dots animation
         Timer timer = new Timer(300, new ActionListener() {
@@ -1098,7 +1100,7 @@ public class GeneticAlgorithmGUI extends javax.swing.JFrame {
             public void actionPerformed(ActionEvent e) {
                 dotsCount = (dotsCount % 3) + 1;
                 String dots = ".".repeat(dotsCount);
-                outputTextArea.setText("Searching" + dots);
+                outputTextArea.setText("Running" + dots);
             }
         });
 
@@ -1181,7 +1183,7 @@ public class GeneticAlgorithmGUI extends javax.swing.JFrame {
 
                         // Print the result directly to the outputTextArea
                         Map.Entry<String, Object> resultEntry = genAlgOutput.entrySet().iterator().next();
-                        String resultText = resultEntry.getKey() + ": " + resultEntry.getValue() + "\n";
+                        String resultText = (String) resultEntry.getValue();
                         outputTextArea.setText("");
                         outputTextArea.setText(resultText);
 
