@@ -176,16 +176,18 @@ public class GeneticAlgorithm {
                 startingMoney,
                 travelCost);
 
+        StringBuilder fitnessReport = new StringBuilder("Generation,Fitness\n");
         ExecutorService executor = Executors.newFixedThreadPool(populationSize);
 
         try {
-            for (int generation = 0; generation < generations; generation++) {
+            for (int generation = 1; generation < generations; generation++) {
 
                 runSimulationTasks(executor, population, simulationDays);
 
                 evaluateAndSortPopulation(population);
 
-                printBestFitness(generation, population);
+                double bestFitness = printBestFitness(generation, population);
+                fitnessReport.append(generation).append(",").append(bestFitness).append("\n");
 
                 ArrayList<Gene> offspring = generateOffspring(
                         population,
@@ -208,6 +210,7 @@ public class GeneticAlgorithm {
 
             City bestCity = population.get(0);
             String bestCityOutput = generateBestCityOutput(generations, bestCity);
+            fitnessReport.append(generations).append(",").append(bestCity.getFitness());
 
             System.out.println(bestCityOutput);
             System.out.println(bestCity.toStringGridLayout());
@@ -215,6 +218,9 @@ public class GeneticAlgorithm {
             Map<String, Object> outputDetails = new HashMap<>();
             outputDetails.put("bestCity", bestCity);
             outputDetails.put("bestCityOutput", bestCityOutput);
+
+            System.out.println("Fitness report");
+            System.out.println(fitnessReport.toString());
 
             return outputDetails;
         } finally {
@@ -261,8 +267,10 @@ public class GeneticAlgorithm {
      * @param generation The current generation number.
      * @param population The list of cities.
      */
-    private void printBestFitness(int generation, ArrayList<City> population) {
-        System.out.println("Generation " + (generation + 1) + ": Best Fitness - " + population.get(0).getFitness());
+    private double printBestFitness(int generation, ArrayList<City> population) {
+        double bestFitness = population.get(0).getFitness();
+        System.out.println("Generation " + (generation + 1) + ": Best Fitness - " + bestFitness);
+        return bestFitness;
     }
 
     /**
