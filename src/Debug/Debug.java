@@ -6,7 +6,7 @@ package Debug;
  */
 public class Debug {
 
-    private Boolean debug = false;
+    private Boolean debug = true;
 
     /**
      * Writes a message if debug mode is enabled.

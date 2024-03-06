@@ -227,7 +227,6 @@ public class City {
                             housesPlaced++;
                             houseList.add(city.buildings[i][j]);
                             buildingsList.add(city.buildings[i][j]);
-                            debug.write("Placed House at (" + i + ", " + j + ")");
                         }
                     }
                     case SHOP -> {
@@ -237,7 +236,6 @@ public class City {
                             shopsPlaced++;
                             shopList.add(city.buildings[i][j]);
                             buildingsList.add(city.buildings[i][j]);
-                            debug.write("Placed Shop at (" + i + ", " + j + ")");
                         }
                     }
                     case OFFICE -> {
@@ -247,7 +245,6 @@ public class City {
                             officesPlaced++;
                             officeList.add(city.buildings[i][j]);
                             buildingsList.add(city.buildings[i][j]);
-                            debug.write("Placed Office at (" + i + ", " + j + ")");
                         }
                     }
                     case EMPTY -> {
@@ -255,7 +252,6 @@ public class City {
                             city.gridLayout[i][j] = BuildingType.EMPTY.getSymbol();
                             city.buildings[i][j] = null;
                             emptySpacesPlaced++;
-                            debug.write("Placed Empty Space at (" + i + ", " + j + ")");
                         }
                     }
                 }
@@ -543,11 +539,6 @@ public class City {
 
     public void setFitness(double fitness) {
         this.fitness = fitness;
-    }
-
-    @Override
-    public String toString() {
-        return "City{" + "width=" + width + ", height=" + height + ", gridLayout=" + gridLayout + ", buildings=" + buildings + ", buildingsList=" + buildingsList + ", people=" + people + ", startingMoney=" + startingMoney + ", travelCost=" + travelCost + ", houses=" + houses + ", offices=" + offices + ", shops=" + shops + ", gene=" + gene + ", fitness=" + fitness + '}';
     }
 
 }

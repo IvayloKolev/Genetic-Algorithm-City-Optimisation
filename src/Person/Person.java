@@ -72,7 +72,6 @@ public class Person {
 
         // Check if the person is inactive or has insufficient money
         if (!active || this.getMoney() <= 0) {
-            debug.write("Person " + this.getName() + " can't go to work - inactive or insufficient money");
             this.setInactive();
             return;
         }
@@ -90,10 +89,6 @@ public class Person {
         this.setCurrentPosition(this.office.getPosition());
         money += office.getSalary();
         money = Math.floor(money * 100) / 100;
-        debug.write("Person " + this.getName() + " is going to work.\nDistance from house to office: " + distance
-                + "\nTravel cost deducted from money: " + travelCost
-                + "\nMoney made at work: " + office.getSalary()
-                + "\nRemaining money: " + money);
     }
 
     /**
@@ -105,7 +100,6 @@ public class Person {
 
         // Check if the person is inactive or has insufficient money
         if (!active || this.getMoney() <= 0) {
-            debug.write("Person " + this.getName() + " can't go shopping - inactive or insufficient money");
             this.setInactive();
             return;
         }
@@ -134,10 +128,6 @@ public class Person {
 
             money -= closestShop.getAverageSpend();
             money = Math.floor(money * 100) / 100;
-            debug.write("Person " + this.getName() + " is going shopping.\nDistance from current position to shop: " + distance
-                    + "\nTravel cost deducted from money: " + travelCost
-                    + "\nMoney spent at shop: " + closestShop.getAverageSpend()
-                    + "\nRemaining money: " + money);
         } else {
             debug.write("No shops available for shopping.");
         }
@@ -152,7 +142,6 @@ public class Person {
 
         // Check if the person is inactive or has insufficient money
         if (!active || this.getMoney() <= 0) {
-            debug.write("Person " + this.getName() + " can't go home - inactive or insufficient money");
             this.setInactive();
             return;
         }
@@ -169,9 +158,6 @@ public class Person {
         money -= finalCost;
         money = Math.floor(money * 100) / 100;
         this.setCurrentPosition(house.getPosition());
-        debug.write("Person " + this.getName() + " is going home.\nDistance from current position to house: " + distance
-                + "\nTravel cost deducted from money: " + travelCost * distance
-                + "\nRemaining money: " + money);
     }
 
     /**

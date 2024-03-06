@@ -280,7 +280,7 @@ public class Selection {
 
             // Check if the accumulated probability exceeds the random value
             if (cumulativeProb >= randomValue) {
-                debug.write("Selected by Linear Ranking Selection: " + city);
+                debug.write("Selected by Linear Ranking Selection: " + city + " Fitness:" + city.getFitness());
                 return city;
             }
         }

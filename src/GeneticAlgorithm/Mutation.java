@@ -40,7 +40,6 @@ public class Mutation {
 
                 // Randomly choose a mutation type
                 int mutationType = random.nextInt(5);
-                debug.write("Selected mutation type: " + mutationType);
 
                 switch (mutationType) {
                     case 0 -> {
@@ -64,6 +63,8 @@ public class Mutation {
                         mutateShopAndOfficeParameters(gene);
                     }
                 }
+            } else {
+                debug.write("No mutation applied to gene " + gene.toString());
             }
         }
     }
@@ -77,7 +78,7 @@ public class Mutation {
         double currentStartingMoney = gene.getStartingMoney();
         double mutationAmount = random.nextDouble() * 10 - 5; // Random value between -5 and 5
         gene.setStartingMoney(currentStartingMoney + mutationAmount);
-        debug.write("Starting money mutated to: " + gene.getStartingMoney());
+        debug.write("Starting money mutated from: " + currentStartingMoney + " to: " + gene.getStartingMoney());
     }
 
     /**
@@ -89,7 +90,7 @@ public class Mutation {
         double currentTravelCost = gene.getTravelCost();
         double mutationAmount = random.nextDouble() * 0.2 - 0.1; // Random value between -0.1 and 0.1
         gene.setTravelCost(currentTravelCost + mutationAmount);
-        debug.write("Travel cost mutated to: " + gene.getTravelCost());
+        debug.write("Travel cost mutated from: " + currentTravelCost + " to: " + gene.getTravelCost());
     }
 
     /**
@@ -113,6 +114,7 @@ public class Mutation {
 
             int originalX = currentBuilding.getX();
             int originalY = currentBuilding.getY();
+            Position oldPosition = new Position(originalX, originalY);
 
             // Check neighboring spaces for availability
             ArrayList<Position> availableSpaces = getAvailableNeighborSpaces(gene, originalX, originalY);
@@ -125,7 +127,7 @@ public class Mutation {
                 currentBuilding.setX(newPosition.getX());
                 currentBuilding.setY(newPosition.getY());
 
-                debug.write("Building moved to new position: " + currentBuilding.getPosition());
+                debug.write("Building " + currentBuilding + " moved from: " + oldPosition + " to new position: " + currentBuilding.getPosition());
             }
         }
     }
@@ -328,7 +330,7 @@ public class Mutation {
         double currentAverageSpend = shop.getAverageSpend();
         double mutationAmount = random.nextDouble() * 10 - 5; // Random value between -5 and 5
         shop.setAverageSpend(currentAverageSpend + mutationAmount);
-        debug.write("Shop average spend mutated to: " + shop.getAverageSpend());
+        debug.write("Shop average spend mutated from: " + currentAverageSpend + "  to: " + shop.getAverageSpend());
     }
 
     /**
@@ -340,6 +342,6 @@ public class Mutation {
         double currentSalary = office.getSalary();
         double mutationAmount = random.nextDouble() * 10 - 5; // Random value between -5 and 5
         office.setSalary(currentSalary + mutationAmount);
-        debug.write("Office salary mutated to: " + office.getSalary());
+        debug.write("Office salary mutated from: " + currentSalary + "  to: " + office.getSalary());
     }
 }
